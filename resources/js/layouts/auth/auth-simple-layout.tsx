@@ -2,6 +2,7 @@ import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
+import { ArrowLeft } from 'lucide-react';
 
 interface AuthLayoutProps {
     name?: string;
@@ -17,6 +18,13 @@ export default function AuthSimpleLayout({
     return (
         <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
             <div className="w-full max-w-sm">
+                <Link
+                    href={home()}
+                    className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+                >
+                    <ArrowLeft className="w-4 h-4" />
+                    Retour au site
+                </Link>
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col items-center gap-4">
                         <Link

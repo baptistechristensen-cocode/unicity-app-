@@ -11,9 +11,9 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { type NavItem, type SharedData } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
+import { AlertTriangle, LayoutGrid, Settings } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -22,13 +22,25 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
-];
-
-const footerNavItems: NavItem[] = [
-    
+    {
+        title: 'Signalements',
+        href: '/signalements',
+        icon: AlertTriangle,
+    },
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage<SharedData>().props;
+    const isAdmin = auth.user?.role === 'Admin' || auth.user?.role === 'Elu' || auth.user?.role === 'Agent';
+
+    const adminNavItems: NavItem[] = isAdmin ? [
+        {
+            title: 'Administration',
+            href: '/admin/signalements',
+            icon: Settings,
+        },
+    ] : [];
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
@@ -45,10 +57,11 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                {isAdmin && <NavMain items={adminNavItems} label="Admin" />}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <NavFooter items={[]} className="mt-auto" />
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
