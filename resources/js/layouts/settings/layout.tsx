@@ -6,27 +6,10 @@ import { useActiveUrl } from '@/hooks/use-active-url';
 import { edit } from '@/routes/profile';
 import { show } from '@/routes/two-factor';
 import { edit as editPassword } from '@/routes/user-password';
+import { edit as editAppearance } from '@/routes/appearance';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import { type PropsWithChildren } from 'react';
-
-const sidebarNavItems: NavItem[] = [
-    {
-        title: 'Profile',
-        href: edit(),
-        icon: null,
-    },
-    {
-        title: 'Password',
-        href: editPassword(),
-        icon: null,
-    },
-    {
-        title: 'Two-Factor Auth',
-        href: show(),
-        icon: null,
-    },
-];
 
 export default function SettingsLayout({ children }: PropsWithChildren) {
     const { urlIsActive } = useActiveUrl();
@@ -36,11 +19,18 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
         return null;
     }
 
+    const sidebarNavItems: NavItem[] = [
+        { title: 'Profil',     href: edit(),           icon: null },
+        { title: 'Mot de passe', href: editPassword(), icon: null },
+        { title: 'Double authentification', href: show(), icon: null },
+        { title: 'Apparence', href: editAppearance(),  icon: null },
+    ];
+
     return (
         <div className="px-4 py-6">
             <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
+                title="Paramètres"
+                description="Gérez les paramètres de votre compte"
             />
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">

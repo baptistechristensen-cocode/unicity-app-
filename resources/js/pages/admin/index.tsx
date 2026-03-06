@@ -93,11 +93,11 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
 
             {/* En-tete */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2" style={{ color: '#2C2C2C' }}>
+                <h1 className="text-3xl font-bold mb-2 text-[#2C2C2C] dark:text-neutral-100">
                     Tableau de bord
                 </h1>
-                <p className="text-gray-600">
-                    Vue d'ensemble de l'activite sur la plateforme UniCity
+                <p className="text-gray-600 dark:text-neutral-400">
+                    Vue d'ensemble de la plateforme UniCity
                 </p>
             </div>
 
@@ -106,7 +106,7 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                 {kpiCards.map((kpi) => {
                     const Icon = kpi.icon;
                     return (
-                        <Card key={kpi.label} className="border-none shadow-md bg-white">
+                        <Card key={kpi.label} className="border-none shadow-md bg-white dark:bg-neutral-800">
                             <CardContent className="p-6">
                                 <div className="flex items-start justify-between mb-4">
                                     <div
@@ -119,8 +119,8 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                                 <div className="text-3xl font-bold mb-1" style={{ color: kpi.color }}>
                                     {kpi.value}
                                 </div>
-                                <div className="text-sm text-gray-600 mb-2">{kpi.label}</div>
-                                <div className="text-xs text-gray-500">{kpi.trend}</div>
+                                <div className="text-sm text-gray-600 dark:text-neutral-400 mb-2">{kpi.label}</div>
+                                <div className="text-xs text-gray-500 dark:text-neutral-400">{kpi.trend}</div>
                             </CardContent>
                         </Card>
                     );
@@ -131,8 +131,8 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                 {/* Graphique */}
                 <Card className="border-none shadow-md bg-white lg:col-span-1">
                     <CardHeader>
-                        <CardTitle>Signalements par statut</CardTitle>
-                        <CardDescription>Repartition des signalements</CardDescription>
+                        <CardTitle>Répartition des statuts</CardTitle>
+                        <CardDescription>Distribution des signalements par statut</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {chartData.some(d => d.value > 0) ? (
@@ -158,8 +158,8 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-[250px] flex items-center justify-center text-gray-500">
-                                Aucun signalement pour le moment
+                            <div className="h-[250px] flex items-center justify-center text-gray-500 dark:text-neutral-400">
+                                Aucune donnée disponible
                             </div>
                         )}
                     </CardContent>
@@ -171,7 +171,7 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                         <div className="flex items-center justify-between">
                             <div>
                                 <CardTitle>Derniers signalements</CardTitle>
-                                <CardDescription>5 signalements les plus recents</CardDescription>
+                                <CardDescription>Les signalements les plus récents</CardDescription>
                             </div>
                             <Link href="/admin/signalements">
                                 <Button variant="outline" size="sm">
@@ -182,19 +182,19 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                     </CardHeader>
                     <CardContent>
                         {recentSignalements.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
-                                Aucun signalement pour le moment
+                            <div className="text-center py-8 text-gray-500 dark:text-neutral-400">
+                                Aucun signalement récent
                             </div>
                         ) : (
                             <div className="space-y-3">
                                 {recentSignalements.map((sig) => (
                                     <div
                                         key={sig.id}
-                                        className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-neutral-700 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-600 transition-colors"
                                     >
                                         <div className="flex-1">
                                             <div className="font-medium mb-1">{sig.titre}</div>
-                                            <div className="text-sm text-gray-500">
+                                            <div className="text-sm text-gray-500 dark:text-neutral-400">
                                                 {getCategoryLabel(sig.category)} • {formatDate(sig.created_at)} • {sig.user.name}
                                             </div>
                                         </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Filter, Eye, MessageSquare } from 'lucide-react';
+import { Search, Filter, Eye, ChevronDown, Loader2 } from 'lucide-react';
 import AdminLayout from '@/layouts/admin-layout';
 import StatusBadge, { SignalementStatus } from '@/components/status-badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -30,6 +30,12 @@ import {
     DialogTitle,
     DialogFooter,
 } from '@/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Head, Link, router } from '@inertiajs/react';
 
 interface Signalement {
@@ -69,6 +75,7 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
     const [newStatus, setNewStatus] = useState<SignalementStatus>('en_cours');
     const [comment, setComment] = useState('');
     const [processing, setProcessing] = useState(false);
+    const [updatingId, setUpdatingId] = useState<number | null>(null);
 
     const handleSearch = () => {
         router.get('/admin/signalements', {
@@ -83,6 +90,14 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
             search: searchTerm || undefined,
             status: value !== 'tous' ? value : undefined,
         }, { preserveState: true });
+    };
+
+    const handleQuickStatusChange = (signalement: Signalement, status: SignalementStatus) => {
+        if (status === signalement.status) return;
+        setUpdatingId(signalement.id);
+        router.patch(`/admin/signalements/${signalement.id}`, { status }, {
+            onFinish: () => setUpdatingId(null),
+        });
     };
 
     const handleUpdateStatus = (signalement: Signalement) => {
@@ -144,43 +159,43 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
             <Head title="Admin - Signalements" />
 
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2" style={{ color: '#2C2C2C' }}>
-                    Gestion des signalements
+                <h1 className="text-3xl font-bold mb-2 text-[#2C2C2C] dark:text-neutral-100">
+                    Signalements
                 </h1>
-                <p className="text-gray-600">
-                    Traitez et suivez les signalements des citoyens
+                <p className="text-gray-600 dark:text-neutral-400">
+                    Gérez et traitez les signalements des citoyens
                 </p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold">{counts.total}</div>
-                        <div className="text-sm text-gray-500">Total</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Total</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
-                        <div className="text-2xl font-bold text-gray-500">{counts.enregistre}</div>
-                        <div className="text-sm text-gray-500">Enregistres</div>
+                        <div className="text-2xl font-bold text-gray-500 dark:text-neutral-300">{counts.enregistre}</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Enregistrés</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold text-[#E67E22]">{counts.en_cours}</div>
-                        <div className="text-sm text-gray-500">En cours</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">En cours</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold text-[#27AE60]">{counts.resolu}</div>
-                        <div className="text-sm text-gray-500">Resolus</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Résolus</div>
                     </CardContent>
                 </Card>
             </div>
 
-            <Card className="border-none shadow-md bg-white">
+            <Card className="border-none shadow-md bg-white dark:bg-neutral-800">
                 <CardHeader>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="relative flex-1">
@@ -200,17 +215,17 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="tous">Tous les statuts</SelectItem>
-                                <SelectItem value="enregistre">Enregistre</SelectItem>
+                                <SelectItem value="enregistre">Enregistré</SelectItem>
                                 <SelectItem value="en_cours">En cours</SelectItem>
-                                <SelectItem value="resolu">Resolu</SelectItem>
+                                <SelectItem value="resolu">Résolu</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                 </CardHeader>
                 <CardContent>
                     {signalements.length === 0 ? (
-                        <div className="text-center py-12 text-gray-500">
-                            Aucun signalement trouve
+                        <div className="text-center py-12 text-gray-500 dark:text-neutral-400">
+                            Aucun signalement trouvé
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -219,7 +234,7 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                     <TableRow>
                                         <TableHead className="w-[80px]">ID</TableHead>
                                         <TableHead>Titre</TableHead>
-                                        <TableHead>Categorie</TableHead>
+                                        <TableHead>Catégorie</TableHead>
                                         <TableHead>Citoyen</TableHead>
                                         <TableHead>Date</TableHead>
                                         <TableHead>Statut</TableHead>
@@ -236,10 +251,44 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                             <TableCell>
                                                 {getCategoryIcon(sig.category)} {getCategoryLabel(sig.category)}
                                             </TableCell>
-                                            <TableCell className="text-gray-500">{sig.user.name}</TableCell>
-                                            <TableCell className="text-gray-500">{formatDate(sig.created_at)}</TableCell>
+                                            <TableCell className="text-gray-500 dark:text-neutral-400">{sig.user.name}</TableCell>
+                                            <TableCell className="text-gray-500 dark:text-neutral-400">{formatDate(sig.created_at)}</TableCell>
                                             <TableCell>
-                                                <StatusBadge status={sig.status} />
+                                                {updatingId === sig.id ? (
+                                                    <div className="flex items-center gap-1">
+                                                        <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                                                        <StatusBadge status={sig.status} />
+                                                    </div>
+                                                ) : (
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <button className="flex items-center gap-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#1A5276]">
+                                                                <StatusBadge status={sig.status} />
+                                                                <ChevronDown className="w-3 h-3 text-gray-400" />
+                                                            </button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="start">
+                                                            <DropdownMenuItem
+                                                                className={sig.status === 'enregistre' ? 'font-semibold' : ''}
+                                                                onClick={() => handleQuickStatusChange(sig, 'enregistre')}
+                                                            >
+                                                                Enregistré
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                className={sig.status === 'en_cours' ? 'font-semibold' : ''}
+                                                                onClick={() => handleQuickStatusChange(sig, 'en_cours')}
+                                                            >
+                                                                En cours
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                className={sig.status === 'resolu' ? 'font-semibold' : ''}
+                                                                onClick={() => handleQuickStatusChange(sig, 'resolu')}
+                                                            >
+                                                                Résolu
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                )}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
@@ -270,16 +319,14 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Mettre a jour le signalement</DialogTitle>
-                        <DialogDescription>
-                            Modifier le statut et ajouter un commentaire pour le citoyen
-                        </DialogDescription>
+                        <DialogTitle>Mettre à jour le statut</DialogTitle>
+                        <DialogDescription>Modifier le statut et ajouter un commentaire</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         {selectedSignalement && (
-                            <div className="bg-gray-50 p-3 rounded-lg">
+                            <div className="bg-gray-50 dark:bg-neutral-700 p-3 rounded-lg">
                                 <div className="font-medium">{selectedSignalement.titre}</div>
-                                <div className="text-sm text-gray-500">
+                                <div className="text-sm text-gray-500 dark:text-neutral-400">
                                     #{selectedSignalement.id} - {selectedSignalement.user.name}
                                 </div>
                             </div>
@@ -291,16 +338,16 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="enregistre">Enregistre</SelectItem>
+                                    <SelectItem value="enregistre">Enregistré</SelectItem>
                                     <SelectItem value="en_cours">En cours</SelectItem>
-                                    <SelectItem value="resolu">Resolu</SelectItem>
+                                    <SelectItem value="resolu">Résolu</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Commentaire pour le citoyen (optionnel)</Label>
+                            <Label>Commentaire</Label>
                             <Textarea
-                                placeholder="Ex: Intervention planifiee pour la semaine prochaine..."
+                                placeholder="Ajoutez un commentaire optionnel..."
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 rows={4}

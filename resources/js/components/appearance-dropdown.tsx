@@ -6,7 +6,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAppearance } from '@/hooks/use-appearance';
-import { Monitor, Moon, Sun } from 'lucide-react';
+import { Monitor, Moon, Sparkles, Sun } from 'lucide-react';
 import { HTMLAttributes } from 'react';
 
 export default function AppearanceToggleDropdown({
@@ -17,12 +17,10 @@ export default function AppearanceToggleDropdown({
 
     const getCurrentIcon = () => {
         switch (appearance) {
-            case 'dark':
-                return <Moon className="h-5 w-5" />;
-            case 'light':
-                return <Sun className="h-5 w-5" />;
-            default:
-                return <Monitor className="h-5 w-5" />;
+            case 'dark':   return <Moon className="h-5 w-5" />;
+            case 'light':  return <Sun className="h-5 w-5" />;
+            case 'pony':   return <span className="text-base">🦄</span>;
+            default:       return <Monitor className="h-5 w-5" />;
         }
     };
 
@@ -36,28 +34,29 @@ export default function AppearanceToggleDropdown({
                         className="h-9 w-9 rounded-md"
                     >
                         {getCurrentIcon()}
-                        <span className="sr-only">Toggle theme</span>
+                        <span className="sr-only">Changer le thème</span>
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => updateAppearance('light')}>
                         <span className="flex items-center gap-2">
-                            <Sun className="h-5 w-5" />
-                            Light
+                            <Sun className="h-5 w-5" /> Clair
                         </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => updateAppearance('dark')}>
                         <span className="flex items-center gap-2">
-                            <Moon className="h-5 w-5" />
-                            Dark
+                            <Moon className="h-5 w-5" /> Sombre
                         </span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                        onClick={() => updateAppearance('system')}
-                    >
+                    <DropdownMenuItem onClick={() => updateAppearance('system')}>
                         <span className="flex items-center gap-2">
-                            <Monitor className="h-5 w-5" />
-                            System
+                            <Monitor className="h-5 w-5" /> Système
+                        </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => updateAppearance('pony')}>
+                        <span className="flex items-center gap-2">
+                            <Sparkles className="h-5 w-5 text-pink-500" />
+                            <span className="text-pink-500 font-medium">My Little Pony 🦄</span>
                         </span>
                     </DropdownMenuItem>
                 </DropdownMenuContent>

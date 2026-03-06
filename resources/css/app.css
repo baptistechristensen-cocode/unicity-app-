@@ -6,6 +6,7 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant pony (&:is(.pony *));
 
 @theme {
     --font-sans:
@@ -130,6 +131,75 @@
     --sidebar-accent-foreground: oklch(0.985 0 0);
     --sidebar-border: oklch(0.269 0 0);
     --sidebar-ring: oklch(0.439 0 0);
+}
+
+
+.pony {
+    --background: oklch(0.99 0.015 340);
+    --foreground: oklch(0.35 0.15 320);
+    --card: oklch(1 0.01 345);
+    --card-foreground: oklch(0.35 0.15 320);
+    --popover: oklch(1 0.01 345);
+    --popover-foreground: oklch(0.35 0.15 320);
+    --primary: oklch(0.65 0.22 350);
+    --primary-foreground: oklch(1 0 0);
+    --secondary: oklch(0.92 0.05 300);
+    --secondary-foreground: oklch(0.4 0.12 310);
+    --muted: oklch(0.94 0.04 340);
+    --muted-foreground: oklch(0.55 0.1 330);
+    --accent: oklch(0.90 0.07 290);
+    --accent-foreground: oklch(0.4 0.15 310);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: oklch(0.88 0.07 340);
+    --input: oklch(0.88 0.07 340);
+    --ring: oklch(0.70 0.18 350);
+    --sidebar: oklch(0.97 0.03 340);
+    --sidebar-foreground: oklch(0.35 0.15 320);
+    --sidebar-primary: oklch(0.65 0.22 350);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.92 0.05 300);
+    --sidebar-accent-foreground: oklch(0.4 0.12 310);
+    --sidebar-border: oklch(0.88 0.07 340);
+    --sidebar-ring: oklch(0.70 0.18 350);
+}
+
+.pony body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6eb4, #ffb347, #fffb69, #6be5a0, #6bc5ff, #c77dff, #ff6eb4);
+    background-size: 300% auto;
+    animation: pony-rainbow 4s linear infinite;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+
+@keyframes pony-rainbow {
+    0%   { background-position: 0% center; }
+    100% { background-position: 300% center; }
+}
+
+@keyframes pony-draw-arc {
+    from { stroke-dashoffset: var(--arc-len); }
+    to   { stroke-dashoffset: 0; }
+}
+
+@keyframes pony-arc-fade {
+    0%   { opacity: 1; }
+    60%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes pony-sparkle {
+    0%   { transform: scale(0) rotate(0deg);   opacity: 0; }
+    25%  { transform: scale(1.3) rotate(90deg); opacity: 1; }
+    70%  { transform: scale(1) rotate(240deg) translateY(-30px); opacity: 1; }
+    100% { transform: scale(0) rotate(360deg) translateY(-70px); opacity: 0; }
 }
 
 @layer base {

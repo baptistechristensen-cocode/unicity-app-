@@ -1,47 +1,69 @@
 import { useCallback, useMemo, useSyncExternalStore } from 'react';
 
-export type ResolvedAppearance = 'light' | 'dark';
+export type ResolvedAppearance = 'light' | 'dark' | 'pony';
 export type Appearance = ResolvedAppearance | 'system';
 
+const STORAGE_KEY = 'appearance';
 const listeners = new Set<() => void>();
-// Force light mode - no dark mode support
-let currentAppearance: Appearance = 'light';
+
+let currentAppearance: Appearance = 'system';
 
 const subscribe = (callback: () => void) => {
     listeners.add(callback);
-
     return () => listeners.delete(callback);
 };
 
-const applyTheme = (): void => {
+const notifyListeners = () => listeners.forEach((cb) => cb());
+
+const resolveAppearance = (appearance: Appearance): ResolvedAppearance => {
+    if (appearance === 'pony') return 'pony';
+    if (appearance !== 'system') return appearance;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
+
+const applyTheme = (appearance: Appearance): void => {
     if (typeof document === 'undefined') return;
 
-    // Always light mode
-    document.documentElement.classList.remove('dark');
-    document.documentElement.style.colorScheme = 'light';
+    const resolved = resolveAppearance(appearance);
+    document.documentElement.classList.toggle('dark', resolved === 'dark');
+    document.documentElement.classList.toggle('pony', resolved === 'pony');
+    document.documentElement.style.colorScheme = resolved === 'pony' ? 'light' : resolved;
 };
 
 export function initializeTheme(): void {
     if (typeof window === 'undefined') return;
 
-    // Always apply light theme
-    applyTheme();
+    const stored = localStorage.getItem(STORAGE_KEY) as Appearance | null;
+    currentAppearance = stored ?? 'system';
+    applyTheme(currentAppearance);
+
+    // Re-apply when system preference changes (only relevant in 'system' mode)
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (currentAppearance === 'system') {
+            applyTheme('system');
+            notifyListeners();
+        }
+    });
 }
 
 export function useAppearance() {
     const appearance: Appearance = useSyncExternalStore(
         subscribe,
         () => currentAppearance,
-        () => 'light',
+        () => 'system',
     );
 
     const resolvedAppearance: ResolvedAppearance = useMemo(
-        () => 'light',
-        [],
+        () => (typeof window === 'undefined' ? 'light' : resolveAppearance(appearance)),
+        [appearance],
     );
 
-    const updateAppearance = useCallback((_mode: Appearance): void => {
-        // No-op: always stay in light mode
+    const updateAppearance = useCallback((mode: Appearance): void => {
+        currentAppearance = mode;
+        localStorage.setItem(STORAGE_KEY, mode);
+        applyTheme(mode);
+        notifyListeners();
+        if (mode === 'pony') window.dispatchEvent(new CustomEvent('ponytime'));
     }, []);
 
     return { appearance, resolvedAppearance, updateAppearance } as const;

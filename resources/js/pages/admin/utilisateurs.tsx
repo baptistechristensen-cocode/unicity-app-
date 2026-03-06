@@ -56,10 +56,10 @@ interface AdminUtilisateursProps {
 }
 
 const roleColors: Record<Role, string> = {
-    Citoyen: 'bg-gray-100 text-gray-700',
-    Agent:   'bg-blue-100 text-blue-700',
-    Admin:   'bg-red-100 text-red-700',
-    Elu:     'bg-purple-100 text-purple-700',
+    Citoyen: 'bg-gray-100 text-gray-700 dark:bg-neutral-700 dark:text-neutral-300',
+    Agent:   'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300',
+    Admin:   'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
+    Elu:     'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300',
 };
 
 export default function AdminUtilisateurs({ users, counts, filters }: AdminUtilisateursProps) {
@@ -111,49 +111,49 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
             <Head title="Admin - Utilisateurs" />
 
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2" style={{ color: '#2C2C2C' }}>
-                    Gestion des utilisateurs
+                <h1 className="text-3xl font-bold mb-2 text-[#2C2C2C] dark:text-neutral-100">
+                    Utilisateurs
                 </h1>
-                <p className="text-gray-600">
-                    Consultez et gerez les roles des membres de la plateforme
+                <p className="text-gray-600 dark:text-neutral-400">
+                    Gérez les comptes et les rôles des utilisateurs
                 </p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold">{counts.total}</div>
-                        <div className="text-sm text-gray-500">Total</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Total</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold text-gray-600">{counts.Citoyen}</div>
-                        <div className="text-sm text-gray-500">Citoyens</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Citoyens</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold text-blue-600">{counts.Agent}</div>
-                        <div className="text-sm text-gray-500">Agents</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Agents</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold text-purple-600">{counts.Elu}</div>
-                        <div className="text-sm text-gray-500">Elus</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Elus</div>
                     </CardContent>
                 </Card>
-                <Card className="border-none shadow-sm bg-white">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
                     <CardContent className="p-4">
                         <div className="text-2xl font-bold text-red-600">{counts.Admin}</div>
-                        <div className="text-sm text-gray-500">Admins</div>
+                        <div className="text-sm text-gray-500 dark:text-neutral-400">Admins</div>
                     </CardContent>
                 </Card>
             </div>
 
-            <Card className="border-none shadow-md bg-white">
+            <Card className="border-none shadow-md bg-white dark:bg-neutral-800">
                 <CardHeader>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="relative flex-1">
@@ -172,7 +172,7 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                                 <SelectValue placeholder="Filtrer par role" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="tous">Tous les roles</SelectItem>
+                                <SelectItem value="tous">Tous les rôles</SelectItem>
                                 <SelectItem value="Citoyen">Citoyen</SelectItem>
                                 <SelectItem value="Agent">Agent</SelectItem>
                                 <SelectItem value="Elu">Elu</SelectItem>
@@ -183,8 +183,8 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                 </CardHeader>
                 <CardContent>
                     {users.length === 0 ? (
-                        <div className="text-center py-12 text-gray-500">
-                            Aucun utilisateur trouve
+                        <div className="text-center py-12 text-gray-500 dark:text-neutral-400">
+                            Aucun utilisateur trouvé
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -194,7 +194,7 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                                         <TableHead className="w-[60px]">ID</TableHead>
                                         <TableHead>Nom</TableHead>
                                         <TableHead>Email</TableHead>
-                                        <TableHead>Role</TableHead>
+                                        <TableHead>Rôle</TableHead>
                                         <TableHead>Inscription</TableHead>
                                         <TableHead className="text-right">Actions</TableHead>
                                     </TableRow>
@@ -202,23 +202,23 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                                 <TableBody>
                                     {users.map((user) => (
                                         <TableRow key={user.id}>
-                                            <TableCell className="font-medium text-gray-400">#{user.id}</TableCell>
+                                            <TableCell className="font-medium text-gray-400 dark:text-neutral-500">#{user.id}</TableCell>
                                             <TableCell className="font-medium">{user.name}</TableCell>
-                                            <TableCell className="text-gray-500">{user.email}</TableCell>
+                                            <TableCell className="text-gray-500 dark:text-neutral-400">{user.email}</TableCell>
                                             <TableCell>
                                                 <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${roleColors[user.role]}`}>
                                                     {user.role === 'Admin' && <Shield className="w-3 h-3" />}
                                                     {user.role}
                                                 </span>
                                             </TableCell>
-                                            <TableCell className="text-gray-500">{formatDate(user.created_at)}</TableCell>
+                                            <TableCell className="text-gray-500 dark:text-neutral-400">{formatDate(user.created_at)}</TableCell>
                                             <TableCell className="text-right">
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
                                                     onClick={() => handleEditRole(user)}
                                                 >
-                                                    Changer le role
+                                                    Changer le rôle
                                                 </Button>
                                             </TableCell>
                                         </TableRow>
@@ -241,9 +241,9 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         {selectedUser && (
-                            <div className="bg-gray-50 p-3 rounded-lg">
+                            <div className="bg-gray-50 dark:bg-neutral-700 p-3 rounded-lg">
                                 <div className="font-medium">{selectedUser.name}</div>
-                                <div className="text-sm text-gray-500">{selectedUser.email}</div>
+                                <div className="text-sm text-gray-500 dark:text-neutral-400">{selectedUser.email}</div>
                             </div>
                         )}
                         <div className="space-y-2">
