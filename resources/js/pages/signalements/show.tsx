@@ -171,10 +171,7 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
                             <CardContent className="p-6">
                                 <h3 className="font-semibold mb-6">Historique du suivi</h3>
                                 <div className="relative">
-                                    {/* Ligne verticale */}
                                     <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
-
-                                    {/* Timeline */}
                                     <div className="space-y-6">
                                         {signalement.timelines.map((item) => (
                                             <div key={item.id} className="relative pl-12">

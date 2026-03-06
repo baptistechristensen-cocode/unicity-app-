@@ -1,15 +1,7 @@
-import {
-    AlertCircle,
-    Vote,
-    Calendar,
-    MessageSquare,
-    BarChart3,
-    ChevronRight,
-    Plus,
-} from 'lucide-react';
+import { AlertCircle, Vote, Calendar, MessageSquare, BarChart3, Plus, ChevronRight } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import StatusBadge, { SignalementStatus } from '@/components/status-badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { type BreadcrumbItem, type SharedData } from '@/types';
@@ -26,309 +18,186 @@ interface Signalement {
 
 interface DashboardProps {
     recentSignalements: Signalement[];
-    stats: {
-        total: number;
-        en_cours: number;
-        resolu: number;
-    };
+    stats: { total: number; en_cours: number; resolu: number };
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Tableau de bord',
-        href: '/dashboard',
-    },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Accueil', href: '/dashboard' }];
 
 export default function Dashboard({ recentSignalements, stats }: DashboardProps) {
     const { auth } = usePage<SharedData>().props;
-    const userName = auth.user?.name || 'Citoyen';
+    const firstName = (auth.user?.name || 'Citoyen').split(' ')[0];
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon apres-midi' : 'Bonsoir';
+
+    const getCategoryIcon = (category: string) =>
+        ({ voirie: '🚧', eclairage: '💡', proprete: '🗑️', autre: '📌' }[category] ?? '📌');
+
+    const getCategoryLabel = (category: string) =>
+        ({ voirie: 'Voirie', eclairage: 'Eclairage', proprete: 'Proprete', autre: 'Autre' }[category] ?? category);
+
+    const formatDate = (dateString: string) =>
+        new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
 
     const modules = [
-        {
-            icon: AlertCircle,
-            title: 'Signalements',
-            description: 'Signaler un probleme',
-            color: '#E67E22',
-            href: '/signalements',
-        },
-        {
-            icon: Vote,
-            title: 'Sondages',
-            description: 'Consultations publiques',
-            color: '#1A5276',
-            href: '/sondages',
-            disabled: true,
-        },
-        {
-            icon: Calendar,
-            title: 'Agenda',
-            description: 'Evenements a venir',
-            color: '#27AE60',
-            href: '/agenda',
-            disabled: true,
-        },
-        {
-            icon: MessageSquare,
-            title: 'Discussion',
-            description: 'Actualites et echanges',
-            color: '#9B59B6',
-            href: '/discussion',
-            disabled: true,
-        },
-        {
-            icon: BarChart3,
-            title: 'Statistiques',
-            description: 'Donnees de la ville',
-            color: '#3498DB',
-            href: '/stats',
-            disabled: true,
-        },
+        { icon: AlertCircle,  title: 'Signalements', description: 'Signaler un probleme',    color: '#E67E22', href: '/signalements', disabled: false },
+        { icon: Vote,         title: 'Sondages',      description: 'Consultations publiques', color: '#1A5276', href: '#',             disabled: true  },
+        { icon: Calendar,     title: 'Agenda',         description: 'Evenements a venir',      color: '#27AE60', href: '#',             disabled: true  },
+        { icon: MessageSquare,title: 'Discussion',     description: 'Actualites et echanges',  color: '#9B59B6', href: '#',             disabled: true  },
+        { icon: BarChart3,    title: 'Statistiques',   description: 'Donnees de la ville',     color: '#3498DB', href: '#',             disabled: true  },
     ];
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-    };
-
-    const getCategoryIcon = (category: string) => {
-        const icons: { [key: string]: string } = {
-            voirie: '🚧',
-            eclairage: '💡',
-            proprete: '🗑️',
-            autre: '📌',
-        };
-        return icons[category] || '📌';
-    };
-
-    const getCategoryLabel = (category: string) => {
-        const labels: { [key: string]: string } = {
-            voirie: 'Voirie',
-            eclairage: 'Eclairage',
-            proprete: 'Proprete',
-            autre: 'Autre',
-        };
-        return labels[category] || category;
-    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Tableau de bord" />
+            <Head title="Accueil" />
 
-            <div className="flex h-full flex-1 flex-col gap-6 p-4">
-                {/* Message de bienvenue */}
+            <div className="flex h-full flex-1 flex-col gap-8 p-4 sm:p-6">
+
+                {/* Greeting + stats inline */}
                 <div>
                     <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                        Bonjour {userName} 👋
+                        {greeting}, {firstName} 👋
                     </h1>
-                    <p className="text-muted-foreground">
-                        Bienvenue sur votre espace citoyen. Que souhaitez-vous faire aujourd'hui ?
-                    </p>
+                    {stats.total > 0 ? (
+                        <p className="text-muted-foreground">
+                            Vous avez{' '}
+                            <span className="font-medium text-foreground">{stats.total} signalement{stats.total > 1 ? 's' : ''}</span>
+                            {stats.en_cours > 0 && <> dont <span className="font-medium text-[#E67E22]">{stats.en_cours} en cours</span></>}
+                            {stats.resolu > 0 && <> et <span className="font-medium text-[#27AE60]">{stats.resolu} resolu{stats.resolu > 1 ? 's' : ''}</span></>}.
+                        </p>
+                    ) : (
+                        <p className="text-muted-foreground">Bienvenue sur votre espace citoyen. Que souhaitez-vous faire ?</p>
+                    )}
                 </div>
 
-                {/* Tuiles d'acces rapide */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                {/* Modules */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     {modules.map((module) => {
                         const Icon = module.icon;
-                        const content = (
-                            <Card
-                                className={`border-none bg-card group h-full ${
-                                    module.disabled
-                                        ? 'opacity-50 cursor-not-allowed'
-                                        : 'cursor-pointer hover:shadow-lg transition-shadow'
-                                }`}
-                            >
-                                <CardContent className="p-4 sm:p-6 flex flex-col items-center text-center">
-                                    <div
-                                        className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform"
-                                        style={{ backgroundColor: module.color }}
-                                    >
-                                        <Icon className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
-                                    </div>
-                                    <h3 className="font-semibold mb-1 text-sm sm:text-base">
-                                        {module.title}
-                                    </h3>
-                                    <p className="text-xs text-muted-foreground hidden sm:block">
-                                        {module.description}
-                                    </p>
-                                    {module.disabled && (
-                                        <span className="text-xs text-muted-foreground mt-1">(Bientot)</span>
-                                    )}
-                                </CardContent>
-                            </Card>
+                        const tile = (
+                            <div className={`group flex flex-col items-center text-center p-4 sm:p-5 rounded-2xl bg-card border border-border/50 h-full transition-all ${
+                                module.disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:shadow-md hover:border-border'
+                            }`}>
+                                <div
+                                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform"
+                                    style={{ backgroundColor: module.color + '18' }}
+                                >
+                                    <Icon className="w-5 h-5" style={{ color: module.color }} />
+                                </div>
+                                <p className="font-semibold text-sm">{module.title}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">{module.description}</p>
+                                {module.disabled && <p className="text-xs text-muted-foreground mt-1">(Bientot)</p>}
+                            </div>
                         );
-
-                        return module.disabled ? (
-                            <div key={module.title}>{content}</div>
-                        ) : (
-                            <Link key={module.title} href={module.href}>
-                                {content}
-                            </Link>
-                        );
+                        return module.disabled
+                            ? <div key={module.title}>{tile}</div>
+                            : <Link key={module.title} href={module.href} className="h-full">{tile}</Link>;
                     })}
                 </div>
 
-                {/* Stats rapides */}
-                <div className="grid grid-cols-3 gap-4">
-                    <Card className="border-none bg-card">
-                        <CardContent className="p-4 text-center">
-                            <div className="text-2xl font-bold">{stats.total}</div>
-                            <div className="text-xs text-muted-foreground">Signalements</div>
-                        </CardContent>
-                    </Card>
-                    <Card className="border-none bg-card">
-                        <CardContent className="p-4 text-center">
-                            <div className="text-2xl font-bold text-[#E67E22]">{stats.en_cours}</div>
-                            <div className="text-xs text-muted-foreground">En cours</div>
-                        </CardContent>
-                    </Card>
-                    <Card className="border-none bg-card">
-                        <CardContent className="p-4 text-center">
-                            <div className="text-2xl font-bold text-[#27AE60]">{stats.resolu}</div>
-                            <div className="text-xs text-muted-foreground">Resolus</div>
-                        </CardContent>
-                    </Card>
-                </div>
+                {/* Contenu principal */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-                {/* Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Mes derniers signalements */}
-                    <Card className="border-none shadow-md bg-card">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle>Mes derniers signalements</CardTitle>
-                                    <CardDescription>Suivez l'etat de vos demandes</CardDescription>
-                                </div>
-                                <Link href="/signalements">
-                                    <Button variant="ghost" size="sm" className="text-[#1A5276]">
-                                        Voir tout
-                                        <ChevronRight className="w-4 h-4 ml-1" />
-                                    </Button>
-                                </Link>
+                    {/* Mes signalements — 3/5 */}
+                    <div className="lg:col-span-3 flex flex-col gap-4">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="font-semibold text-lg">Mes signalements</h2>
+                                <p className="text-sm text-muted-foreground">Suivez l'etat de vos demandes</p>
                             </div>
-                        </CardHeader>
-                        <CardContent className="space-y-4">
-                            {recentSignalements.length === 0 ? (
-                                <div className="text-center py-8">
-                                    <p className="text-muted-foreground mb-4">
-                                        Vous n'avez pas encore de signalements
-                                    </p>
+                            <Link href="/signalements">
+                                <Button variant="ghost" size="sm" className="text-muted-foreground gap-1">
+                                    Tout voir <ChevronRight className="w-4 h-4" />
+                                </Button>
+                            </Link>
+                        </div>
+
+                        {recentSignalements.length === 0 ? (
+                            <Card className="border border-dashed border-border shadow-none bg-transparent">
+                                <CardContent className="p-8 flex flex-col items-center text-center gap-3">
+                                    <div className="w-14 h-14 rounded-2xl bg-[#E67E22]/10 flex items-center justify-center">
+                                        <AlertCircle className="w-7 h-7 text-[#E67E22]" />
+                                    </div>
+                                    <p className="text-muted-foreground text-sm">Vous n'avez pas encore de signalements</p>
                                     <Link href="/signalements/create">
-                                        <Button className="bg-[#E67E22] hover:bg-[#D35400]">
+                                        <Button className="bg-[#E67E22] hover:bg-[#D35400] mt-1">
                                             <Plus className="w-4 h-4 mr-2" />
                                             Creer un signalement
                                         </Button>
                                     </Link>
-                                </div>
-                            ) : (
-                                recentSignalements.map((signalement) => (
-                                    <Link
-                                        key={signalement.id}
-                                        href={`/signalements/${signalement.id}`}
-                                        className="flex gap-3 p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors block"
-                                    >
-                                        <div
-                                            className="w-16 h-16 rounded-lg flex-shrink-0 flex items-center justify-center text-2xl"
-                                            style={{ backgroundColor: '#f3f4f6' }}
-                                        >
-                                            {signalement.photo ? (
-                                                <img
-                                                    src={`/storage/${signalement.photo}`}
-                                                    alt={signalement.titre}
-                                                    className="w-full h-full object-cover rounded-lg"
-                                                />
-                                            ) : (
-                                                getCategoryIcon(signalement.category)
-                                            )}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-start justify-between gap-2 mb-1">
-                                                <h4 className="font-medium text-sm line-clamp-1">
-                                                    {signalement.titre}
-                                                </h4>
-                                                <StatusBadge status={signalement.status} className="flex-shrink-0" />
+                                </CardContent>
+                            </Card>
+                        ) : (
+                            <div className="flex flex-col gap-2">
+                                {recentSignalements.map((s) => (
+                                    <Link key={s.id} href={`/signalements/${s.id}`}>
+                                        <div className="flex items-center gap-4 p-4 rounded-2xl bg-card border border-border/50 hover:shadow-sm hover:border-border transition-all">
+                                            <div className="w-14 h-14 rounded-xl flex-shrink-0 overflow-hidden bg-muted flex items-center justify-center text-2xl">
+                                                {s.photo
+                                                    ? <img src={`/storage/${s.photo}`} alt={s.titre} className="w-full h-full object-cover" />
+                                                    : getCategoryIcon(s.category)
+                                                }
                                             </div>
-                                            <p className="text-xs text-muted-foreground mb-1">
-                                                {getCategoryIcon(signalement.category)} {getCategoryLabel(signalement.category)}
-                                            </p>
-                                            <p className="text-xs text-muted-foreground">
-                                                {formatDate(signalement.created_at)}
-                                            </p>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium text-sm line-clamp-1 mb-0.5">{s.titre}</p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {getCategoryLabel(s.category)} · {formatDate(s.created_at)}
+                                                </p>
+                                            </div>
+                                            <StatusBadge status={s.status} />
                                         </div>
                                     </Link>
-                                ))
-                            )}
-                        </CardContent>
-                    </Card>
-
-                    {/* Sondages en cours (placeholder) */}
-                    <Card className="border-none shadow-md bg-card">
-                        <CardHeader>
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <CardTitle>Sondages en cours</CardTitle>
-                                    <CardDescription>Donnez votre avis</CardDescription>
-                                </div>
-                                <Button variant="ghost" size="sm" className="text-[#1A5276]" disabled>
-                                    Voir tout
-                                    <ChevronRight className="w-4 h-4 ml-1" />
-                                </Button>
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-6">
-                                {/* Placeholder sondage 1 */}
-                                <div className="space-y-3 opacity-60">
-                                    <div>
-                                        <h4 className="font-medium mb-1">Amenagement du centre-ville</h4>
-                                        <p className="text-sm text-muted-foreground mb-2">
-                                            Donnez votre avis sur le projet de pietonisation
-                                        </p>
+                                ))}
+                                <Link href="/signalements/create">
+                                    <div className="flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-border text-sm text-muted-foreground hover:text-foreground hover:border-border transition-colors cursor-pointer">
+                                        <Plus className="w-4 h-4" />
+                                        Nouveau signalement
                                     </div>
-                                    <div className="space-y-2">
-                                        <Progress value={65} className="h-2" />
-                                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                            <span>1,247 participants</span>
-                                            <span>Jusqu'au 15/03/2026</span>
-                                        </div>
-                                    </div>
-                                    <Button size="sm" className="w-full bg-[#27AE60] hover:bg-[#229954]" disabled>
-                                        Bientot disponible
-                                    </Button>
-                                </div>
+                                </Link>
                             </div>
-                        </CardContent>
-                    </Card>
-                </div>
+                        )}
+                    </div>
 
-                {/* Bandeau actualite */}
-                <Card className="border-none shadow-md bg-gradient-to-r from-[#1A5276] to-[#2874A6] text-white">
-                    <CardContent className="p-6">
-                        <div className="flex items-start gap-4">
-                            <MessageSquare className="w-8 h-8 flex-shrink-0 mt-1" />
-                            <div className="flex-1">
-                                <h3 className="font-semibold mb-2">Actualite de la mairie</h3>
-                                <p className="text-white/90 text-sm mb-3">
-                                    Reunion publique le 15 mars : presentation du projet d'amenagement du parc
-                                    central. Venez nombreux pour en discuter avec vos elus !
+                    {/* Colonne droite — 2/5 */}
+                    <div className="lg:col-span-2 flex flex-col gap-4">
+
+                        {/* Sondage placeholder */}
+                        <Card className="border border-border/50 shadow-none bg-card">
+                            <CardHeader className="pb-3">
+                                <CardTitle className="text-base">Sondage en cours</CardTitle>
+                                <CardDescription>Donnez votre avis</CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-3 opacity-60">
+                                <p className="font-medium text-sm">Amenagement du centre-ville</p>
+                                <p className="text-xs text-muted-foreground">
+                                    Donnez votre avis sur le projet de pietonisation du centre
                                 </p>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="border-white text-white hover:bg-white/10 bg-transparent"
-                                    disabled
-                                >
-                                    En savoir plus (bientot)
+                                <Progress value={65} className="h-1.5" />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>1 247 participants</span>
+                                    <span>15/03/2026</span>
+                                </div>
+                                <Button size="sm" className="w-full bg-[#27AE60] hover:bg-[#229954]" disabled>
+                                    Bientot disponible
                                 </Button>
+                            </CardContent>
+                        </Card>
+
+                        {/* Actualite mairie */}
+                        <div className="rounded-2xl p-5 flex gap-3 items-start" style={{ backgroundColor: '#1A5276' + '12' }}>
+                            <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1A5276' }}>
+                                <MessageSquare className="w-4 h-4 text-white" />
+                            </div>
+                            <div>
+                                <p className="font-semibold text-sm mb-1">Actualite de la mairie</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    Reunion publique le 15 mars : presentation du projet d'amenagement du parc central.
+                                    Venez nombreux pour en discuter avec vos elus !
+                                </p>
                             </div>
                         </div>
-                    </CardContent>
-                </Card>
+
+                    </div>
+                </div>
             </div>
         </AppLayout>
     );
