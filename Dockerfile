@@ -1,17 +1,10 @@
 FROM php:8.2-cli
 
-# Dépendances système
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpq-dev libzip-dev \
+    git curl zip unzip libpq-dev libzip-dev nodejs npm \
     && docker-php-ext-install pdo pdo_pgsql zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Node.js 20
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
-
-# Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
