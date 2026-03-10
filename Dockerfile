@@ -15,13 +15,13 @@ COPY . .
 
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 RUN npm ci && npm run build
-
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && php artisan storage:link --force
+RUN chown -R www-data:www-data storage bootstrap/cache
 
 EXPOSE 8080
 
-CMD php artisan config:cache && \
+CMD php artisan package:discover --ansi && \
+    php artisan storage:link --force && \
+    php artisan config:cache && \
     php artisan route:cache && \
     php artisan view:cache && \
     php artisan migrate --force && \
