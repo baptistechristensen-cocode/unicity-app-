@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: unicity-app
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_NAME
+        value: Unicity
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        value: base64:blDI2fwpE0/Lx+VPvMTusc70WXGLIrgu752n+LYON04=
+      - key: APP_URL
+        value: https://unicity-app.onrender.com
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        value: postgresql://neondb_owner:npg_1uAJokC0hQNK@ep-noisy-wave-ab5twsu7-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+      - key: SESSION_DRIVER
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: LOG_CHANNEL
+        value: stderr
