@@ -13,7 +13,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction
+RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 RUN npm ci && npm run build
 
 RUN chown -R www-data:www-data storage bootstrap/cache \
