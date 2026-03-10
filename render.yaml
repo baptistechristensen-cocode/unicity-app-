@@ -18,7 +18,7 @@ services:
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_URL
-        value: postgresql://neondb_owner:npg_M2HNogVU8sKd@ep-young-waterfall-ab0e4v7m-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+        value: postgresql://neondb_owner:npg_M2HNogVU8sKd@ep-young-waterfall-ab0e4v7m-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require
       - key: SESSION_DRIVER
         value: database
       - key: CACHE_STORE
