@@ -16,7 +16,8 @@ COPY . .
 RUN COMPOSER_MEMORY_LIMIT=-1 composer install --no-dev --optimize-autoloader --no-interaction
 RUN npm ci && npm run build
 
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache \
+    && php artisan storage:link --force
 
 EXPOSE 8080
 
