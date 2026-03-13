@@ -14,6 +14,7 @@ class Signalement extends Model
     protected $fillable = [
         'titre',
         'description',
+        'commentaire',
         'category',
         'status',
         'location',

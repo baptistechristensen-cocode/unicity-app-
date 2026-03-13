@@ -12,17 +12,8 @@ use Laravel\Fortify\Features;
 
 
 Route::get('/', function () {
-    $totalSignalements = Signalement::count();
-    $resolus = Signalement::where('status', 'resolu')->count();
-    $tauxResolution = $totalSignalements > 0 ? round(($resolus / $totalSignalements) * 100) : 0;
-
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
-        'stats' => [
-            'totalUsers' => User::count(),
-            'totalSignalements' => $totalSignalements,
-            'tauxResolution' => $tauxResolution,
-        ],
     ]);
 })->name('home');
 

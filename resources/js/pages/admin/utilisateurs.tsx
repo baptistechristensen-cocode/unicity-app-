@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/dialog';
 import { Head, router } from '@inertiajs/react';
 
-type Role = 'Citoyen' | 'Agent' | 'Admin' | 'Elu';
+type Role = 'Citoyen' | 'Association' | 'Agent' | 'Admin' | 'Elu';
 
 interface User {
     id: number;
@@ -44,6 +44,7 @@ interface AdminUtilisateursProps {
     counts: {
         total: number;
         Citoyen: number;
+        Association: number;
         Agent: number;
         Admin: number;
         Elu: number;
@@ -55,10 +56,11 @@ interface AdminUtilisateursProps {
 }
 
 const roleColors: Record<Role, string> = {
-    Citoyen: 'bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300',
-    Agent:   'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
-    Admin:   'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300',
-    Elu:     'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300',
+    Citoyen:     'bg-gray-100 text-gray-700 dark:bg-neutral-800 dark:text-neutral-300',
+    Association: 'bg-green-100 text-green-700 dark:bg-green-950 dark:text-green-300',
+    Agent:       'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300',
+    Admin:       'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300',
+    Elu:         'bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300',
 };
 
 export default function AdminUtilisateurs({ users, counts, filters }: AdminUtilisateursProps) {
@@ -119,13 +121,14 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-6 gap-4 mb-6">
                 {[
-                    { label: 'Total',    value: counts.total,    color: 'text-gray-900 dark:text-neutral-100' },
-                    { label: 'Citoyens', value: counts.Citoyen,  color: 'text-gray-600 dark:text-neutral-300' },
-                    { label: 'Agents',   value: counts.Agent,    color: 'text-blue-600 dark:text-blue-400' },
-                    { label: 'Élus',     value: counts.Elu,      color: 'text-purple-600 dark:text-purple-400' },
-                    { label: 'Admins',   value: counts.Admin,    color: 'text-red-600 dark:text-red-400' },
+                    { label: 'Total',        value: counts.total,       color: 'text-gray-900 dark:text-neutral-100' },
+                    { label: 'Citoyens',     value: counts.Citoyen,     color: 'text-gray-600 dark:text-neutral-300' },
+                    { label: 'Associations', value: counts.Association, color: 'text-green-600 dark:text-green-400' },
+                    { label: 'Agents',       value: counts.Agent,       color: 'text-blue-600 dark:text-blue-400' },
+                    { label: 'Élus',         value: counts.Elu,         color: 'text-purple-600 dark:text-purple-400' },
+                    { label: 'Admins',       value: counts.Admin,       color: 'text-red-600 dark:text-red-400' },
                 ].map(stat => (
                     <Card key={stat.label} className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800">
                         <CardContent className="p-4">
@@ -157,6 +160,7 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                             <SelectContent>
                                 <SelectItem value="tous">Tous les rôles</SelectItem>
                                 <SelectItem value="Citoyen">Citoyen</SelectItem>
+                                <SelectItem value="Association">Association</SelectItem>
                                 <SelectItem value="Agent">Agent</SelectItem>
                                 <SelectItem value="Elu">Élu</SelectItem>
                                 <SelectItem value="Admin">Admin</SelectItem>
@@ -233,6 +237,7 @@ export default function AdminUtilisateurs({ users, counts, filters }: AdminUtili
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Citoyen">Citoyen — accès standard</SelectItem>
+                                    <SelectItem value="Association">Association — accès standard</SelectItem>
                                     <SelectItem value="Agent">Agent — peut traiter les signalements</SelectItem>
                                     <SelectItem value="Elu">Élu — accès back-office</SelectItem>
                                     <SelectItem value="Admin">Admin — accès complet</SelectItem>

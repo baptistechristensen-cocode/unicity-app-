@@ -27,17 +27,18 @@ class AdminSignalementController extends Controller
             });
         }
 
-        if ($status && in_array($status, ['enregistre', 'en_cours', 'resolu'])) {
+        if ($status && in_array($status, ['enregistre', 'en_cours', 'resolu', 'rejete'])) {
             $query->where('status', $status);
         }
 
         $signalements = $query->get();
 
         $counts = [
-            'total' => Signalement::count(),
+            'total'      => Signalement::count(),
             'enregistre' => Signalement::where('status', 'enregistre')->count(),
-            'en_cours' => Signalement::where('status', 'en_cours')->count(),
-            'resolu' => Signalement::where('status', 'resolu')->count(),
+            'en_cours'   => Signalement::where('status', 'en_cours')->count(),
+            'resolu'     => Signalement::where('status', 'resolu')->count(),
+            'rejete'     => Signalement::where('status', 'rejete')->count(),
         ];
 
         return Inertia::render('admin/signalements', [
@@ -53,30 +54,48 @@ class AdminSignalementController extends Controller
     public function update(Request $request, Signalement $signalement): RedirectResponse
     {
         $validated = $request->validate([
-            'status' => ['required', 'in:enregistre,en_cours,resolu'],
-            'comment' => ['nullable', 'string'],
+            'status'      => ['sometimes', 'in:enregistre,en_cours,resolu,rejete'],
+            'titre'       => ['sometimes', 'string', 'max:255'],
+            'commentaire' => ['nullable', 'string'],
         ]);
 
-        $oldStatus = $signalement->status;
-        $signalement->update(['status' => $validated['status']]);
+        $changes = [];
 
-        if ($oldStatus !== $validated['status']) {
-            $signalement->timelines()->create([
-                'status' => $validated['status'],
-                'description' => $validated['comment'] ?? $this->getStatusDescription($validated['status']),
-            ]);
+        if (isset($validated['titre'])) {
+            $changes['titre'] = $validated['titre'];
         }
 
-        return redirect()->back()->with('success', 'Signalement mis a jour');
+        if (array_key_exists('commentaire', $validated)) {
+            $changes['commentaire'] = $validated['commentaire'];
+        }
+
+        if (isset($validated['status'])) {
+            $oldStatus = $signalement->status;
+            $changes['status'] = $validated['status'];
+
+            $signalement->update($changes);
+
+            if ($oldStatus !== $validated['status']) {
+                $signalement->timelines()->create([
+                    'status'      => $validated['status'],
+                    'description' => $this->getStatusDescription($validated['status']),
+                ]);
+            }
+        } else {
+            $signalement->update($changes);
+        }
+
+        return redirect()->back()->with('success', 'Signalement mis à jour');
     }
 
     private function getStatusDescription(string $status): string
     {
         return match ($status) {
-            'enregistre' => 'Signalement enregistre',
-            'en_cours' => 'Signalement pris en charge par les services municipaux',
-            'resolu' => 'Signalement resolu',
-            default => 'Statut mis a jour',
+            'enregistre' => 'Signalement enregistré',
+            'en_cours'   => 'Signalement pris en charge par les services municipaux',
+            'resolu'     => 'Signalement résolu',
+            'rejete'     => 'Signalement rejeté',
+            default      => 'Statut mis à jour',
         };
     }
 }

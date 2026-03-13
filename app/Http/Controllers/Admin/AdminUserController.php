@@ -25,18 +25,19 @@ class AdminUserController extends Controller
             });
         }
 
-        if ($role && in_array($role, ['Citoyen', 'Agent', 'Admin', 'Elu'])) {
+        if ($role && in_array($role, ['Citoyen', 'Association', 'Agent', 'Admin', 'Elu'])) {
             $query->where('role', $role);
         }
 
         $users = $query->get(['id', 'name', 'email', 'role', 'created_at']);
 
         $counts = [
-            'total'   => User::count(),
-            'Citoyen' => User::where('role', 'Citoyen')->count(),
-            'Agent'   => User::where('role', 'Agent')->count(),
-            'Admin'   => User::where('role', 'Admin')->count(),
-            'Elu'     => User::where('role', 'Elu')->count(),
+            'total'       => User::count(),
+            'Citoyen'     => User::where('role', 'Citoyen')->count(),
+            'Association' => User::where('role', 'Association')->count(),
+            'Agent'       => User::where('role', 'Agent')->count(),
+            'Admin'       => User::where('role', 'Admin')->count(),
+            'Elu'         => User::where('role', 'Elu')->count(),
         ];
 
         return Inertia::render('admin/utilisateurs', [
@@ -49,7 +50,7 @@ class AdminUserController extends Controller
     public function updateRole(Request $request, User $user): RedirectResponse
     {
         $validated = $request->validate([
-            'role' => ['required', 'in:Citoyen,Agent,Admin,Elu'],
+            'role' => ['required', 'in:Citoyen,Association,Agent,Admin,Elu'],
         ]);
 
         $user->update(['role' => $validated['role']]);

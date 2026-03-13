@@ -1,9 +1,8 @@
-import { AlertCircle, Vote, Calendar, MessageSquare, BarChart3, Plus, ChevronRight } from 'lucide-react';
+import { AlertCircle, Vote, Calendar, MessageSquare, Plus, ChevronRight, MapPin, CheckCircle2 } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import StatusBadge, { SignalementStatus } from '@/components/status-badge';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
 
@@ -38,12 +37,11 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
     const formatDate = (dateString: string) =>
         new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
 
-    const modules = [
-        { icon: AlertCircle,  title: 'Signaler',     description: 'Signaler un problème',    color: '#E67E22', href: '/signalements', disabled: false },
-        { icon: Vote,         title: 'Sondages',     description: 'Consultations publiques', color: '#1A5276', href: '#',             disabled: true  },
-        { icon: Calendar,     title: 'Agenda',        description: 'Événements à venir',      color: '#27AE60', href: '#',             disabled: true  },
-        { icon: MessageSquare,title: 'Actualités',   description: 'Infos de la mairie',      color: '#9B59B6', href: '#',             disabled: true  },
-        { icon: BarChart3,    title: 'Statistiques', description: 'Données de la ville',     color: '#3498DB', href: '#',             disabled: true  },
+    const quickActions = [
+        { icon: AlertCircle,   title: 'Signaler un problème',     description: 'Voirie, éclairage, propreté…', color: '#E67E22', href: '/signalements/create', disabled: false },
+        { icon: Vote,          title: 'Sondages citoyens',        description: 'Donnez votre avis',           color: '#1A5276', href: '#',                    disabled: true  },
+        { icon: Calendar,      title: 'Agenda de la ville',       description: 'Événements à venir',          color: '#27AE60', href: '#',                    disabled: true  },
+        { icon: MessageSquare, title: 'Actualités',               description: 'Infos de la mairie',          color: '#9B59B6', href: '#',                    disabled: true  },
     ];
 
     return (
@@ -52,46 +50,61 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
 
             <div className="flex h-full flex-1 flex-col gap-8 p-4 sm:p-6">
 
-                {/* Greeting + stats inline */}
-                <div>
-                    <h1 className="text-3xl md:text-4xl font-bold mb-2">
-                        {greeting}, {firstName} 👋
-                    </h1>
-                    {stats.total > 0 ? (
-                        <p className="text-muted-foreground">
-                            Vous avez{' '}
-                            <span className="font-medium text-foreground">{stats.total} signalement{stats.total > 1 ? 's' : ''}</span>
-                            {stats.en_cours > 0 && <> dont <span className="font-medium text-[#E67E22]">{stats.en_cours} en cours</span></>}
-                            {stats.resolu > 0 && <> et <span className="font-medium text-[#27AE60]">{stats.resolu} résolu{stats.resolu > 1 ? 's' : ''}</span></>}.
-                        </p>
-                    ) : (
-                        <p className="text-muted-foreground">Bienvenue sur votre espace citoyen. Que souhaitez-vous faire ?</p>
-                    )}
+                {/* Hero */}
+                <div className="rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #1A5276 0%, #2E86C1 100%)' }}>
+                    <div className="px-6 py-8 sm:px-10 sm:py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                        <div className="text-white">
+                            <div className="flex items-center gap-2 mb-2 text-blue-200 text-sm font-medium">
+                                <MapPin className="w-4 h-4" />
+                                Espace citoyen
+                            </div>
+                            <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+                                {greeting}, {firstName} 👋
+                            </h1>
+                            <p className="text-blue-100 text-sm sm:text-base max-w-md leading-relaxed">
+                                Bienvenue sur votre espace citoyen. Signalez un problème,
+                                participez aux sondages ou consultez l'agenda de votre ville.
+                            </p>
+                        </div>
+                        <Link href="/signalements/create" className="flex-shrink-0">
+                            <Button className="bg-[#E67E22] hover:bg-[#D35400] text-white font-semibold px-6 py-5 text-base rounded-xl shadow-lg">
+                                <Plus className="w-5 h-5 mr-2" />
+                                Faire un signalement
+                            </Button>
+                        </Link>
+                    </div>
                 </div>
 
-                {/* Modules */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                    {modules.map((module) => {
-                        const Icon = module.icon;
-                        const tile = (
-                            <div className={`group flex flex-col items-center text-center p-4 sm:p-5 rounded-2xl bg-card border border-border/50 h-full transition-all ${
-                                module.disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:shadow-md hover:border-border'
-                            }`}>
-                                <div
-                                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform"
-                                    style={{ backgroundColor: module.color + '18' }}
-                                >
-                                    <Icon className="w-5 h-5" style={{ color: module.color }} />
+                {/* Actions rapides */}
+                <div>
+                    <h2 className="font-semibold text-base mb-3 text-muted-foreground uppercase tracking-wide text-xs">Services disponibles</h2>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        {quickActions.map((action) => {
+                            const Icon = action.icon;
+                            const tile = (
+                                <div className={`group flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 h-full transition-all ${
+                                    action.disabled
+                                        ? 'opacity-40 cursor-not-allowed'
+                                        : 'cursor-pointer hover:shadow-md hover:border-border'
+                                }`}>
+                                    <div
+                                        className="w-11 h-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105"
+                                        style={{ backgroundColor: action.color + '18' }}
+                                    >
+                                        <Icon className="w-5 h-5" style={{ color: action.color }} />
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-sm leading-tight">{action.title}</p>
+                                        <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+                                        {action.disabled && <p className="text-xs text-muted-foreground mt-1 italic">Bientôt disponible</p>}
+                                    </div>
                                 </div>
-                                <p className="font-semibold text-sm">{module.title}</p>
-                                <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">{module.description}</p>
-                                {module.disabled && <p className="text-xs text-muted-foreground mt-1">(Bientôt)</p>}
-                            </div>
-                        );
-                        return module.disabled
-                            ? <div key={module.title}>{tile}</div>
-                            : <Link key={module.title} href={module.href} className="h-full">{tile}</Link>;
-                    })}
+                            );
+                            return action.disabled
+                                ? <div key={action.title}>{tile}</div>
+                                : <Link key={action.title} href={action.href} className="h-full">{tile}</Link>;
+                        })}
+                    </div>
                 </div>
 
                 {/* Contenu principal */}
@@ -102,26 +115,31 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="font-semibold text-lg">Mes signalements</h2>
-                                <p className="text-sm text-muted-foreground">Suivez l'état de vos demandes</p>
+                                <p className="text-sm text-muted-foreground">Suivez l'avancement de vos demandes</p>
                             </div>
-                            <Link href="/signalements">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground gap-1">
-                                    Tout voir <ChevronRight className="w-4 h-4" />
-                                </Button>
-                            </Link>
+                            {recentSignalements.length > 0 && (
+                                <Link href="/signalements">
+                                    <Button variant="ghost" size="sm" className="text-muted-foreground gap-1">
+                                        Tout voir <ChevronRight className="w-4 h-4" />
+                                    </Button>
+                                </Link>
+                            )}
                         </div>
 
                         {recentSignalements.length === 0 ? (
                             <Card className="border border-dashed border-border shadow-none bg-transparent">
-                                <CardContent className="p-8 flex flex-col items-center text-center gap-3">
+                                <CardContent className="p-10 flex flex-col items-center text-center gap-3">
                                     <div className="w-14 h-14 rounded-2xl bg-[#E67E22]/10 flex items-center justify-center">
                                         <AlertCircle className="w-7 h-7 text-[#E67E22]" />
                                     </div>
-                                    <p className="text-muted-foreground text-sm">Vous n'avez pas encore signalé de problème</p>
+                                    <div>
+                                        <p className="font-medium text-sm">Aucun signalement pour l'instant</p>
+                                        <p className="text-muted-foreground text-xs mt-1">Vous pouvez signaler un problème en quelques secondes</p>
+                                    </div>
                                     <Link href="/signalements/create">
                                         <Button className="bg-[#E67E22] hover:bg-[#D35400] mt-1">
                                             <Plus className="w-4 h-4 mr-2" />
-                                            Signaler un problème
+                                            Faire mon premier signalement
                                         </Button>
                                     </Link>
                                 </CardContent>
@@ -150,7 +168,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                 <Link href="/signalements/create">
                                     <div className="flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-border text-sm text-muted-foreground hover:text-foreground hover:border-border transition-colors cursor-pointer">
                                         <Plus className="w-4 h-4" />
-                                        Signaler un nouveau problème
+                                        Nouveau signalement
                                     </div>
                                 </Link>
                             </div>
@@ -160,29 +178,26 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                     {/* Colonne droite — 2/5 */}
                     <div className="lg:col-span-2 flex flex-col gap-4">
 
-                        {/* Sondage placeholder */}
-                        <Card className="border border-border/50 shadow-none bg-card">
-                            <CardHeader className="pb-3">
-                                <CardTitle className="text-base">Sondage en cours</CardTitle>
-                                <CardDescription>Donnez votre avis</CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-3 opacity-60">
-                                <p className="font-medium text-sm">Aménagement du centre-ville</p>
-                                <p className="text-xs text-muted-foreground">
-                                    Donnez votre avis sur le projet de piétonisation du centre
-                                </p>
-                                <Progress value={65} className="h-1.5" />
-                                <div className="flex justify-between text-xs text-muted-foreground">
-                                    <span>1 247 participants</span>
-                                    <span>15/03/2026</span>
-                                </div>
-                                <Button size="sm" className="w-full bg-[#27AE60] hover:bg-[#229954]" disabled>
-                                    Bientôt disponible
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        {/* Comment ça marche */}
+                        <div className="rounded-2xl border border-border/50 bg-card p-5">
+                            <p className="font-semibold text-sm mb-4">Comment ça marche ?</p>
+                            <div className="flex flex-col gap-4">
+                                {[
+                                    { step: '1', color: '#E67E22', text: 'Signalez un problème près de chez vous en quelques secondes' },
+                                    { step: '2', color: '#1A5276', text: 'La mairie reçoit votre demande et la traite en priorité' },
+                                    { step: '3', color: '#27AE60', text: 'Suivez l\'avancement et soyez notifié quand c\'est résolu' },
+                                ].map(({ step, color, text }) => (
+                                    <div key={step} className="flex items-start gap-3">
+                                        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white text-xs font-bold" style={{ backgroundColor: color }}>
+                                            {step}
+                                        </div>
+                                        <p className="text-xs text-muted-foreground leading-relaxed pt-0.5">{text}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
 
-                        {/* Actualite mairie */}
+                        {/* Actualité mairie */}
                         <div className="rounded-2xl p-5 flex gap-3 items-start" style={{ backgroundColor: '#1A5276' + '12' }}>
                             <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#1A5276' }}>
                                 <MessageSquare className="w-4 h-4 text-white" />
@@ -196,6 +211,15 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                             </div>
                         </div>
 
+                        {/* Stats discrètes */}
+                        {stats.resolu > 0 && (
+                            <div className="rounded-2xl p-5 flex gap-3 items-center" style={{ backgroundColor: '#27AE60' + '10' }}>
+                                <CheckCircle2 className="w-5 h-5 flex-shrink-0" style={{ color: '#27AE60' }} />
+                                <p className="text-sm text-muted-foreground leading-snug">
+                                    <span className="font-semibold text-foreground">{stats.resolu} problème{stats.resolu > 1 ? 's' : ''} résolu{stats.resolu > 1 ? 's' : ''}</span> grâce à vos signalements
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

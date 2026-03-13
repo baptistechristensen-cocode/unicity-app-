@@ -57,11 +57,11 @@ export default function TwoFactorRecoveryCodes({
             <CardHeader>
                 <CardTitle className="flex gap-3">
                     <LockKeyhole className="size-4" aria-hidden="true" />
-                    2FA Recovery Codes
+                    Codes de récupération 2FA
                 </CardTitle>
                 <CardDescription>
-                    Recovery codes let you regain access if you lose your 2FA
-                    device. Store them in a secure password manager.
+                    Les codes de récupération vous permettent de retrouver l'accès
+                    si vous perdez votre appareil 2FA. Conservez-les dans un gestionnaire de mots de passe sécurisé.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -76,7 +76,7 @@ export default function TwoFactorRecoveryCodes({
                             className="size-4"
                             aria-hidden="true"
                         />
-                        {codesAreVisible ? 'Hide' : 'View'} Recovery Codes
+                        {codesAreVisible ? 'Masquer' : 'Afficher'} les codes de récupération
                     </Button>
 
                     {canRegenerateCodes && (
@@ -92,7 +92,7 @@ export default function TwoFactorRecoveryCodes({
                                     disabled={processing}
                                     aria-describedby="regenerate-warning"
                                 >
-                                    <RefreshCw /> Regenerate Codes
+                                    <RefreshCw /> Régénérer les codes
                                 </Button>
                             )}
                         </Form>
@@ -145,13 +145,13 @@ export default function TwoFactorRecoveryCodes({
 
                                 <div className="text-xs text-muted-foreground select-none">
                                     <p id="regenerate-warning">
-                                        Each recovery code can be used once to
-                                        access your account and will be removed
-                                        after use. If you need more, click{' '}
+                                        Chaque code de récupération peut être utilisé une seule fois
+                                        pour accéder à votre compte et sera supprimé après utilisation.
+                                        Si vous en avez besoin de nouveaux, cliquez sur{' '}
                                         <span className="font-bold">
-                                            Regenerate Codes
+                                            Régénérer les codes
                                         </span>{' '}
-                                        above.
+                                        ci-dessus.
                                     </p>
                                 </div>
                             </>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Filter, Eye, ChevronDown, Loader2 } from 'lucide-react';
+import { Search, Filter, Eye, ChevronDown, Loader2, Pencil } from 'lucide-react';
 import AdminLayout from '@/layouts/admin-layout';
 import StatusBadge, { SignalementStatus } from '@/components/status-badge';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -42,6 +42,7 @@ interface Signalement {
     id: number;
     titre: string;
     description: string;
+    commentaire: string | null;
     category: string;
     status: SignalementStatus;
     location: string | null;
@@ -60,6 +61,7 @@ interface AdminSignalementsProps {
         enregistre: number;
         en_cours: number;
         resolu: number;
+        rejete: number;
     };
     filters: {
         search: string | null;
@@ -73,7 +75,8 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
     const [selectedSignalement, setSelectedSignalement] = useState<Signalement | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [newStatus, setNewStatus] = useState<SignalementStatus>('en_cours');
-    const [comment, setComment] = useState('');
+    const [editTitre, setEditTitre] = useState('');
+    const [commentaire, setCommentaire] = useState('');
     const [processing, setProcessing] = useState(false);
     const [updatingId, setUpdatingId] = useState<number | null>(null);
 
@@ -103,7 +106,8 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
     const handleUpdateStatus = (signalement: Signalement) => {
         setSelectedSignalement(signalement);
         setNewStatus(signalement.status);
-        setComment('');
+        setEditTitre(signalement.titre);
+        setCommentaire(signalement.commentaire || '');
         setIsDialogOpen(true);
     };
 
@@ -112,7 +116,8 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
         setProcessing(true);
         router.patch(`/admin/signalements/${selectedSignalement.id}`, {
             status: newStatus,
-            comment: comment || undefined,
+            titre: editTitre || undefined,
+            commentaire: commentaire || null,
         }, {
             onSuccess: () => { setIsDialogOpen(false); setProcessing(false); },
             onError: () => setProcessing(false),
@@ -152,12 +157,13 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-6">
                 {[
                     { label: 'Total',    value: counts.total,      color: 'text-gray-900 dark:text-neutral-100' },
                     { label: 'Reçus',    value: counts.enregistre, color: 'text-gray-500 dark:text-neutral-400' },
                     { label: 'En cours', value: counts.en_cours,   color: 'text-[#E67E22]' },
                     { label: 'Résolus',  value: counts.resolu,     color: 'text-[#27AE60]' },
+                    { label: 'Rejetés',  value: counts.rejete,     color: 'text-red-600 dark:text-red-400' },
                 ].map(stat => (
                     <Card key={stat.label} className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800">
                         <CardContent className="p-4">
@@ -191,6 +197,7 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                 <SelectItem value="enregistre">Reçu</SelectItem>
                                 <SelectItem value="en_cours">En cours</SelectItem>
                                 <SelectItem value="resolu">Résolu</SelectItem>
+                                <SelectItem value="rejete">Rejeté</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -244,6 +251,7 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                                             <DropdownMenuItem className={sig.status === 'enregistre' ? 'font-semibold' : ''} onClick={() => handleQuickStatusChange(sig, 'enregistre')}>Reçu</DropdownMenuItem>
                                                             <DropdownMenuItem className={sig.status === 'en_cours' ? 'font-semibold' : ''} onClick={() => handleQuickStatusChange(sig, 'en_cours')}>En cours</DropdownMenuItem>
                                                             <DropdownMenuItem className={sig.status === 'resolu' ? 'font-semibold' : ''} onClick={() => handleQuickStatusChange(sig, 'resolu')}>Résolu</DropdownMenuItem>
+                                                            <DropdownMenuItem className={`${sig.status === 'rejete' ? 'font-semibold' : ''} text-red-600`} onClick={() => handleQuickStatusChange(sig, 'rejete')}>Rejeté</DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 )}
@@ -256,7 +264,7 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                                         </Button>
                                                     </Link>
                                                     <Button size="sm" variant="outline" className="dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800" onClick={() => handleUpdateStatus(sig)}>
-                                                        Modifier
+                                                        <Pencil className="w-3.5 h-3.5 mr-1" /> Modifier
                                                     </Button>
                                                 </div>
                                             </TableCell>
@@ -278,13 +286,20 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         {selectedSignalement && (
-                            <div className="bg-gray-50 dark:bg-neutral-800 p-3 rounded-lg">
-                                <div className="font-medium text-gray-900 dark:text-neutral-100">{selectedSignalement.titre}</div>
-                                <div className="text-sm text-gray-500 dark:text-neutral-400">#{selectedSignalement.id} — {selectedSignalement.user.name}</div>
+                            <div className="bg-gray-50 dark:bg-neutral-800 p-3 rounded-lg text-sm text-gray-500 dark:text-neutral-400">
+                                #{selectedSignalement.id} — {selectedSignalement.user.name}
                             </div>
                         )}
                         <div className="space-y-2">
-                            <Label className="dark:text-neutral-300">Nouveau statut</Label>
+                            <Label className="dark:text-neutral-300">Titre</Label>
+                            <Input
+                                value={editTitre}
+                                onChange={(e) => setEditTitre(e.target.value)}
+                                className="dark:bg-neutral-800 dark:border-neutral-700"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label className="dark:text-neutral-300">Statut</Label>
                             <Select value={newStatus} onValueChange={(v) => setNewStatus(v as SignalementStatus)}>
                                 <SelectTrigger className="dark:bg-neutral-800 dark:border-neutral-700">
                                     <SelectValue />
@@ -293,16 +308,19 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                     <SelectItem value="enregistre">Reçu</SelectItem>
                                     <SelectItem value="en_cours">En cours</SelectItem>
                                     <SelectItem value="resolu">Résolu</SelectItem>
+                                    <SelectItem value="rejete">
+                                        <span className="text-red-600">Rejeté</span>
+                                    </SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label className="dark:text-neutral-300">Commentaire</Label>
+                            <Label className="dark:text-neutral-300">Commentaire pour le citoyen</Label>
                             <Textarea
-                                placeholder="Ajoutez un commentaire optionnel..."
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                                rows={4}
+                                placeholder="Message visible par le citoyen sur sa fiche..."
+                                value={commentaire}
+                                onChange={(e) => setCommentaire(e.target.value)}
+                                rows={3}
                                 className="dark:bg-neutral-800 dark:border-neutral-700"
                             />
                         </div>

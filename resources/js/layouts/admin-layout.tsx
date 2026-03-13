@@ -1,9 +1,13 @@
-import { Home, AlertCircle, BarChart3, Calendar, Users, Building2, LogOut } from 'lucide-react';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { AppContent } from '@/components/app-content';
+import { AppShell } from '@/components/app-shell';
+import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import { AdminSidebar } from '@/components/admin-sidebar';
+import { useAppearance } from '@/hooks/use-appearance';
 import { type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
+import { Home, AlertCircle, BarChart3, Calendar, Users, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { type ReactNode, useMemo } from 'react';
-import { useAppearance } from '@/hooks/use-appearance';
 
 interface AdminLayoutProps {
     children: ReactNode;
@@ -11,14 +15,14 @@ interface AdminLayoutProps {
 }
 
 const MLP_COLORS = {
-    bg:        '#FDF0FF',
-    sidebar:   '#F8E8FF',
-    border:    '#E8C8F8',
-    active:    '#C77DFF',
-    hover:     '#F0D8FF',
-    text:      '#7B2D8B',
-    subtext:   '#B07DC8',
-    avatarBg:  '#C77DFF',
+    bg:       '#FDF0FF',
+    sidebar:  '#F8E8FF',
+    border:   '#E8C8F8',
+    active:   '#C77DFF',
+    hover:    '#F0D8FF',
+    text:     '#7B2D8B',
+    subtext:  '#B07DC8',
+    avatarBg: '#C77DFF',
 };
 
 const MLP_LABELS: Record<string, string> = {
@@ -58,11 +62,11 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
     const lbl = (l: string) => mlp ? (MLP_LABELS[l] ?? l) : l;
     const c = MLP_COLORS;
 
+    // Mode MLP
     if (mlp) {
         return (
             <div className="flex h-screen transition-colors duration-500" style={{ background: c.bg }}>
                 <aside className="w-64 flex flex-col h-screen sticky top-0 border-r transition-colors duration-500" style={{ background: c.sidebar, borderColor: c.border }}>
-                    {/* Logo */}
                     <div className="p-6 border-b relative overflow-hidden" style={{ borderColor: c.border }}>
                         <FloatingSparkle style={{ top: 6,  left: 130, fontSize: 10, color: '#FF85C2', animationDelay: '0s'   }} />
                         <FloatingSparkle style={{ top: 22, left: 210, fontSize: 8,  color: '#C77DFF', animationDelay: '0.8s' }} />
@@ -79,8 +83,6 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
                             </div>
                         </div>
                     </div>
-
-                    {/* Menu */}
                     <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                         {menuItems.map((item) => {
                             const Icon = item.icon;
@@ -107,8 +109,6 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
                             );
                         })}
                     </nav>
-
-                    {/* Retour au site */}
                     <div className="p-4 border-t" style={{ borderColor: c.border }}>
                         <Link href="/dashboard" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors duration-200" style={{ color: c.text }}
                             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = c.hover; }}
@@ -118,8 +118,6 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
                             <span className="font-medium">{lbl('Retour au site')}</span>
                         </Link>
                     </div>
-
-                    {/* Profil */}
                     <div className="p-4 border-t space-y-2" style={{ borderColor: c.border }}>
                         <div className="flex items-center gap-3 px-2 py-1">
                             <Avatar className="w-10 h-10">
@@ -141,7 +139,6 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
                         </button>
                     </div>
                 </aside>
-
                 <main className="flex-1 overflow-y-auto relative">
                     <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
                         {[
@@ -173,91 +170,16 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
         );
     }
 
-    // Mode normal (light / dark via Tailwind)
+    // Mode normal — même structure que le site
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-neutral-950">
-            {/* Sidebar */}
-            <aside className="w-64 flex flex-col h-screen sticky top-0 border-r bg-white dark:bg-neutral-900 border-gray-200 dark:border-neutral-800">
-                {/* Logo */}
-                <div className="p-6 border-b border-gray-200 dark:border-neutral-800">
-                    <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-[#1A5276]">
-                            <Building2 className="w-6 h-6 text-white" />
-                        </div>
-                        <div>
-                            <div className="font-semibold text-lg text-[#1A5276] dark:text-blue-400">UniCity</div>
-                            <div className="text-xs text-gray-500 dark:text-neutral-500">Back-office</div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Menu */}
-                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-                    {menuItems.map((item) => {
-                        const Icon = item.icon;
-                        const isActive = currentPage === item.page;
-                        if (item.disabled) {
-                            return (
-                                <div key={item.page} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 dark:text-neutral-600 cursor-not-allowed opacity-50">
-                                    <Icon className="w-5 h-5" />
-                                    <span className="font-medium">{item.label}</span>
-                                    <span className="ml-auto text-xs">(Bientôt)</span>
-                                </div>
-                            );
-                        }
-                        return (
-                            <Link key={item.page} href={item.href}
-                                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                    isActive
-                                        ? 'bg-[#1A5276] text-white'
-                                        : 'text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-800'
-                                }`}
-                            >
-                                <Icon className="w-5 h-5" />
-                                <span className="font-medium">{item.label}</span>
-                            </Link>
-                        );
-                    })}
-                </nav>
-
-                {/* Retour au site */}
-                <div className="p-4 border-t border-gray-200 dark:border-neutral-800">
-                    <Link href="/dashboard"
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 dark:text-neutral-300 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
-                    >
-                        <Home className="w-5 h-5" />
-                        <span className="font-medium">Retour au site</span>
-                    </Link>
-                </div>
-
-                {/* Profil */}
-                <div className="p-4 border-t border-gray-200 dark:border-neutral-800 space-y-2">
-                    <div className="flex items-center gap-3 px-2 py-1">
-                        <Avatar className="w-10 h-10">
-                            <AvatarFallback className="bg-[#1A5276] text-white">
-                                {userName.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0">
-                            <div className="font-medium text-sm truncate text-gray-900 dark:text-neutral-100">{userName}</div>
-                            <div className="text-xs text-gray-500 dark:text-neutral-500">{auth.user?.role || 'Administrateur'}</div>
-                        </div>
-                    </div>
-                    <button onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 dark:text-neutral-400 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors"
-                    >
-                        <LogOut className="w-4 h-4" />
-                        <span className="text-sm">Se déconnecter</span>
-                    </button>
-                </div>
-            </aside>
-
-            {/* Contenu */}
-            <main className="flex-1 overflow-y-auto">
-                <div className="p-8">
+        <AppShell variant="sidebar">
+            <AdminSidebar />
+            <AppContent variant="sidebar" className="overflow-x-hidden">
+                <AppSidebarHeader />
+                <div className="p-6">
                     {children}
                 </div>
-            </main>
-        </div>
+            </AppContent>
+        </AppShell>
     );
 }
