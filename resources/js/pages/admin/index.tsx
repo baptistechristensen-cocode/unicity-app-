@@ -53,11 +53,11 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
             trend: 'Tous les signalements',
         },
         {
-            label: 'Evenements a venir',
+            label: 'Événements à venir',
             value: '0',
             icon: Calendar,
             color: '#27AE60',
-            trend: 'Bientot disponible',
+            trend: 'Bientôt disponible',
         },
         {
             label: 'Citoyens inscrits',
@@ -80,8 +80,8 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
     const getCategoryLabel = (category: string) => {
         const labels: { [key: string]: string } = {
             voirie: 'Voirie',
-            eclairage: 'Eclairage',
-            proprete: 'Proprete',
+            eclairage: 'Éclairage',
+            proprete: 'Propreté',
             autre: 'Autre',
         };
         return labels[category] || category;
@@ -91,12 +91,11 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
         <AdminLayout currentPage="dashboard">
             <Head title="Admin - Tableau de bord" />
 
-            {/* En-tete */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2 text-[#2C2C2C] dark:text-neutral-100">
+                <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-neutral-100">
                     Tableau de bord
                 </h1>
-                <p className="text-gray-600 dark:text-neutral-400">
+                <p className="text-gray-500 dark:text-neutral-400">
                     Vue d'ensemble de la plateforme UniCity
                 </p>
             </div>
@@ -106,13 +105,10 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                 {kpiCards.map((kpi) => {
                     const Icon = kpi.icon;
                     return (
-                        <Card key={kpi.label} className="border-none shadow-md bg-white dark:bg-neutral-800">
+                        <Card key={kpi.label} className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800">
                             <CardContent className="p-6">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div
-                                        className="w-12 h-12 rounded-lg flex items-center justify-center"
-                                        style={{ backgroundColor: kpi.color + '20' }}
-                                    >
+                                    <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: kpi.color + '20' }}>
                                         <Icon className="w-6 h-6" style={{ color: kpi.color }} />
                                     </div>
                                 </div>
@@ -120,7 +116,7 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                                     {kpi.value}
                                 </div>
                                 <div className="text-sm text-gray-600 dark:text-neutral-400 mb-2">{kpi.label}</div>
-                                <div className="text-xs text-gray-500 dark:text-neutral-400">{kpi.trend}</div>
+                                <div className="text-xs text-gray-400 dark:text-neutral-500">{kpi.trend}</div>
                             </CardContent>
                         </Card>
                     );
@@ -129,10 +125,10 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Graphique */}
-                <Card className="border-none shadow-md bg-white lg:col-span-1">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800 lg:col-span-1">
                     <CardHeader>
-                        <CardTitle>Répartition des statuts</CardTitle>
-                        <CardDescription>Distribution des signalements par statut</CardDescription>
+                        <CardTitle className="text-gray-900 dark:text-neutral-100">Répartition des statuts</CardTitle>
+                        <CardDescription className="dark:text-neutral-400">Distribution des signalements par statut</CardDescription>
                     </CardHeader>
                     <CardContent>
                         {chartData.some(d => d.value > 0) ? (
@@ -154,11 +150,13 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                                             <Cell key={`cell-${index}`} fill={entry.color} />
                                         ))}
                                     </Pie>
-                                    <Tooltip />
+                                    <Tooltip
+                                        contentStyle={{ background: 'var(--tooltip-bg, white)', border: '1px solid #e5e7eb', borderRadius: 8 }}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="h-[250px] flex items-center justify-center text-gray-500 dark:text-neutral-400">
+                            <div className="h-[250px] flex items-center justify-center text-gray-400 dark:text-neutral-500">
                                 Aucune donnée disponible
                             </div>
                         )}
@@ -166,15 +164,15 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                 </Card>
 
                 {/* Derniers signalements */}
-                <Card className="border-none shadow-md bg-white lg:col-span-2">
+                <Card className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800 lg:col-span-2">
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <div>
-                                <CardTitle>Derniers signalements</CardTitle>
-                                <CardDescription>Les signalements les plus récents</CardDescription>
+                                <CardTitle className="text-gray-900 dark:text-neutral-100">Derniers signalements</CardTitle>
+                                <CardDescription className="dark:text-neutral-400">Les signalements les plus récents</CardDescription>
                             </div>
                             <Link href="/admin/signalements">
-                                <Button variant="outline" size="sm">
+                                <Button variant="outline" size="sm" className="dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800">
                                     Voir tout
                                 </Button>
                             </Link>
@@ -182,26 +180,26 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                     </CardHeader>
                     <CardContent>
                         {recentSignalements.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500 dark:text-neutral-400">
+                            <div className="text-center py-8 text-gray-400 dark:text-neutral-500">
                                 Aucun signalement récent
                             </div>
                         ) : (
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {recentSignalements.map((sig) => (
                                     <div
                                         key={sig.id}
-                                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-neutral-700 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-600 transition-colors"
+                                        className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors"
                                     >
-                                        <div className="flex-1">
-                                            <div className="font-medium mb-1">{sig.titre}</div>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="font-medium text-gray-900 dark:text-neutral-100 truncate">{sig.titre}</div>
                                             <div className="text-sm text-gray-500 dark:text-neutral-400">
-                                                {getCategoryLabel(sig.category)} • {formatDate(sig.created_at)} • {sig.user.name}
+                                                {getCategoryLabel(sig.category)} · {formatDate(sig.created_at)} · {sig.user.name}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-3 ml-4 flex-shrink-0">
                                             <StatusBadge status={sig.status} />
                                             <Link href={`/signalements/${sig.id}`}>
-                                                <Button size="sm" variant="ghost">
+                                                <Button size="sm" variant="ghost" className="dark:text-neutral-400 dark:hover:bg-neutral-700">
                                                     <Edit className="w-4 h-4" />
                                                 </Button>
                                             </Link>
@@ -217,34 +215,28 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
             {/* Actions rapides */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                 <Link href="/admin/signalements">
-                    <Card className="border-none shadow-md bg-gradient-to-br from-[#E67E22] to-[#D35400] text-white cursor-pointer hover:shadow-lg transition-shadow h-full">
+                    <Card className="border-none shadow-sm bg-gradient-to-br from-[#E67E22] to-[#D35400] text-white cursor-pointer hover:shadow-md transition-shadow h-full">
                         <CardContent className="p-6">
                             <AlertCircle className="w-8 h-8 mb-3" />
-                            <h3 className="font-semibold text-lg mb-2">Gerer les signalements</h3>
-                            <p className="text-white/90 text-sm">
-                                Traiter et mettre a jour les signalements citoyens
-                            </p>
+                            <h3 className="font-semibold text-lg mb-2">Gérer les signalements</h3>
+                            <p className="text-white/80 text-sm">Traiter et mettre à jour les signalements citoyens</p>
                         </CardContent>
                     </Card>
                 </Link>
 
-                <Card className="border-none shadow-md bg-gradient-to-br from-[#1A5276] to-[#154360] text-white cursor-not-allowed opacity-75 h-full">
+                <Card className="border-none shadow-sm bg-gradient-to-br from-[#1A5276] to-[#154360] text-white cursor-not-allowed opacity-60 h-full">
                     <CardContent className="p-6">
                         <BarChart3 className="w-8 h-8 mb-3" />
-                        <h3 className="font-semibold text-lg mb-2">Creer un sondage</h3>
-                        <p className="text-white/90 text-sm">
-                            Bientot disponible
-                        </p>
+                        <h3 className="font-semibold text-lg mb-2">Créer un sondage</h3>
+                        <p className="text-white/80 text-sm">Bientôt disponible</p>
                     </CardContent>
                 </Card>
 
-                <Card className="border-none shadow-md bg-gradient-to-br from-[#27AE60] to-[#229954] text-white cursor-not-allowed opacity-75 h-full">
+                <Card className="border-none shadow-sm bg-gradient-to-br from-[#27AE60] to-[#229954] text-white cursor-not-allowed opacity-60 h-full">
                     <CardContent className="p-6">
                         <Calendar className="w-8 h-8 mb-3" />
-                        <h3 className="font-semibold text-lg mb-2">Publier un evenement</h3>
-                        <p className="text-white/90 text-sm">
-                            Bientot disponible
-                        </p>
+                        <h3 className="font-semibold text-lg mb-2">Publier un événement</h3>
+                        <p className="text-white/80 text-sm">Bientôt disponible</p>
                     </CardContent>
                 </Card>
             </div>

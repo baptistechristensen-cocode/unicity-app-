@@ -45,8 +45,8 @@ interface SignalementIndexProps {
 }
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Tableau de bord', href: '/dashboard' },
-    { title: 'Signalements', href: '/signalements' },
+    { title: 'Accueil', href: '/dashboard' },
+    { title: 'Mes signalements', href: '/signalements' },
 ];
 
 export default function SignalementIndex({ signalements, counts, currentStatus }: SignalementIndexProps) {
@@ -74,8 +74,8 @@ export default function SignalementIndex({ signalements, counts, currentStatus }
     const getCategoryLabel = (category: string) => {
         const labels: { [key: string]: string } = {
             voirie: 'Voirie',
-            eclairage: 'Eclairage',
-            proprete: 'Proprete',
+            eclairage: 'Éclairage',
+            proprete: 'Propreté',
             autre: 'Autre',
         };
         return labels[category] || category;
@@ -84,29 +84,29 @@ export default function SignalementIndex({ signalements, counts, currentStatus }
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
+            day: 'numeric',
+            month: 'long',
             year: 'numeric',
         });
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Signalements" />
+            <Head title="Mes signalements" />
 
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold mb-2">Signalements</h1>
+                        <h1 className="text-3xl font-bold mb-2">Mes signalements</h1>
                         <p className="text-muted-foreground">
-                            Signalez les problemes de votre quartier et suivez leur resolution
+                            Retrouvez ici tous les problèmes que vous avez signalés
                         </p>
                     </div>
                     <Link href="/signalements/create">
                         <Button className="bg-[#E67E22] hover:bg-[#D35400] flex-shrink-0" size="lg">
                             <Plus className="w-5 h-5 mr-2" />
-                            Nouveau signalement
+                            Signaler un problème
                         </Button>
                     </Link>
                 </div>
@@ -115,16 +115,16 @@ export default function SignalementIndex({ signalements, counts, currentStatus }
                 <Tabs value={filter} onValueChange={handleFilterChange} className="mb-2">
                     <TabsList className="bg-card h-auto p-1">
                         <TabsTrigger value="tous" className="px-6">
-                            Actifs ({counts.total})
+                            Tous ({counts.total})
                         </TabsTrigger>
                         <TabsTrigger value="enregistre" className="px-6">
-                            Enregistre ({counts.enregistre})
+                            Reçus ({counts.enregistre})
                         </TabsTrigger>
                         <TabsTrigger value="en_cours" className="px-6">
                             En cours ({counts.en_cours})
                         </TabsTrigger>
                         <TabsTrigger value="resolu" className="px-6">
-                            Resolu ({counts.resolu})
+                            Résolus ({counts.resolu})
                         </TabsTrigger>
                     </TabsList>
                 </Tabs>
@@ -132,7 +132,7 @@ export default function SignalementIndex({ signalements, counts, currentStatus }
                 {/* List */}
                 {signalements.data.length === 0 ? (
                     <Card className="border-none shadow-md p-12 text-center">
-                        <p className="text-muted-foreground">Aucun signalement dans cette categorie</p>
+                        <p className="text-muted-foreground">Aucun signalement dans cette catégorie</p>
                     </Card>
                 ) : (
                     <>
@@ -188,7 +188,7 @@ export default function SignalementIndex({ signalements, counts, currentStatus }
                         {signalements.last_page > 1 && (
                             <div className="flex items-center justify-between mt-2">
                                 <p className="text-sm text-muted-foreground">
-                                    Page {signalements.current_page} sur {signalements.last_page} — {signalements.total} signalements
+                                    Page {signalements.current_page} sur {signalements.last_page} — {signalements.total} signalement{signalements.total > 1 ? 's' : ''}
                                 </p>
                                 <div className="flex gap-2">
                                     <Button
@@ -198,7 +198,7 @@ export default function SignalementIndex({ signalements, counts, currentStatus }
                                         onClick={() => signalements.prev_page_url && router.get(signalements.prev_page_url)}
                                     >
                                         <ChevronLeft className="w-4 h-4" />
-                                        Precedent
+                                        Précédent
                                     </Button>
                                     <Button
                                         variant="outline"

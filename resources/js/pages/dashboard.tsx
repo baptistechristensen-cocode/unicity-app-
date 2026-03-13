@@ -27,23 +27,23 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
     const { auth } = usePage<SharedData>().props;
     const firstName = (auth.user?.name || 'Citoyen').split(' ')[0];
     const hour = new Date().getHours();
-    const greeting = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon apres-midi' : 'Bonsoir';
+    const greeting = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
 
     const getCategoryIcon = (category: string) =>
         ({ voirie: '🚧', eclairage: '💡', proprete: '🗑️', autre: '📌' }[category] ?? '📌');
 
     const getCategoryLabel = (category: string) =>
-        ({ voirie: 'Voirie', eclairage: 'Eclairage', proprete: 'Proprete', autre: 'Autre' }[category] ?? category);
+        ({ voirie: 'Voirie', eclairage: 'Éclairage', proprete: 'Propreté', autre: 'Autre' }[category] ?? category);
 
     const formatDate = (dateString: string) =>
         new Date(dateString).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
 
     const modules = [
-        { icon: AlertCircle,  title: 'Signalements', description: 'Signaler un probleme',    color: '#E67E22', href: '/signalements', disabled: false },
-        { icon: Vote,         title: 'Sondages',      description: 'Consultations publiques', color: '#1A5276', href: '#',             disabled: true  },
-        { icon: Calendar,     title: 'Agenda',         description: 'Evenements a venir',      color: '#27AE60', href: '#',             disabled: true  },
-        { icon: MessageSquare,title: 'Discussion',     description: 'Actualites et echanges',  color: '#9B59B6', href: '#',             disabled: true  },
-        { icon: BarChart3,    title: 'Statistiques',   description: 'Donnees de la ville',     color: '#3498DB', href: '#',             disabled: true  },
+        { icon: AlertCircle,  title: 'Signaler',     description: 'Signaler un problème',    color: '#E67E22', href: '/signalements', disabled: false },
+        { icon: Vote,         title: 'Sondages',     description: 'Consultations publiques', color: '#1A5276', href: '#',             disabled: true  },
+        { icon: Calendar,     title: 'Agenda',        description: 'Événements à venir',      color: '#27AE60', href: '#',             disabled: true  },
+        { icon: MessageSquare,title: 'Actualités',   description: 'Infos de la mairie',      color: '#9B59B6', href: '#',             disabled: true  },
+        { icon: BarChart3,    title: 'Statistiques', description: 'Données de la ville',     color: '#3498DB', href: '#',             disabled: true  },
     ];
 
     return (
@@ -62,7 +62,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                             Vous avez{' '}
                             <span className="font-medium text-foreground">{stats.total} signalement{stats.total > 1 ? 's' : ''}</span>
                             {stats.en_cours > 0 && <> dont <span className="font-medium text-[#E67E22]">{stats.en_cours} en cours</span></>}
-                            {stats.resolu > 0 && <> et <span className="font-medium text-[#27AE60]">{stats.resolu} resolu{stats.resolu > 1 ? 's' : ''}</span></>}.
+                            {stats.resolu > 0 && <> et <span className="font-medium text-[#27AE60]">{stats.resolu} résolu{stats.resolu > 1 ? 's' : ''}</span></>}.
                         </p>
                     ) : (
                         <p className="text-muted-foreground">Bienvenue sur votre espace citoyen. Que souhaitez-vous faire ?</p>
@@ -85,7 +85,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                 </div>
                                 <p className="font-semibold text-sm">{module.title}</p>
                                 <p className="text-xs text-muted-foreground mt-0.5 hidden sm:block">{module.description}</p>
-                                {module.disabled && <p className="text-xs text-muted-foreground mt-1">(Bientot)</p>}
+                                {module.disabled && <p className="text-xs text-muted-foreground mt-1">(Bientôt)</p>}
                             </div>
                         );
                         return module.disabled
@@ -102,7 +102,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="font-semibold text-lg">Mes signalements</h2>
-                                <p className="text-sm text-muted-foreground">Suivez l'etat de vos demandes</p>
+                                <p className="text-sm text-muted-foreground">Suivez l'état de vos demandes</p>
                             </div>
                             <Link href="/signalements">
                                 <Button variant="ghost" size="sm" className="text-muted-foreground gap-1">
@@ -117,11 +117,11 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                     <div className="w-14 h-14 rounded-2xl bg-[#E67E22]/10 flex items-center justify-center">
                                         <AlertCircle className="w-7 h-7 text-[#E67E22]" />
                                     </div>
-                                    <p className="text-muted-foreground text-sm">Vous n'avez pas encore de signalements</p>
+                                    <p className="text-muted-foreground text-sm">Vous n'avez pas encore signalé de problème</p>
                                     <Link href="/signalements/create">
                                         <Button className="bg-[#E67E22] hover:bg-[#D35400] mt-1">
                                             <Plus className="w-4 h-4 mr-2" />
-                                            Creer un signalement
+                                            Signaler un problème
                                         </Button>
                                     </Link>
                                 </CardContent>
@@ -150,7 +150,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                 <Link href="/signalements/create">
                                     <div className="flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-border text-sm text-muted-foreground hover:text-foreground hover:border-border transition-colors cursor-pointer">
                                         <Plus className="w-4 h-4" />
-                                        Nouveau signalement
+                                        Signaler un nouveau problème
                                     </div>
                                 </Link>
                             </div>
@@ -167,9 +167,9 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                 <CardDescription>Donnez votre avis</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-3 opacity-60">
-                                <p className="font-medium text-sm">Amenagement du centre-ville</p>
+                                <p className="font-medium text-sm">Aménagement du centre-ville</p>
                                 <p className="text-xs text-muted-foreground">
-                                    Donnez votre avis sur le projet de pietonisation du centre
+                                    Donnez votre avis sur le projet de piétonisation du centre
                                 </p>
                                 <Progress value={65} className="h-1.5" />
                                 <div className="flex justify-between text-xs text-muted-foreground">
@@ -177,7 +177,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                     <span>15/03/2026</span>
                                 </div>
                                 <Button size="sm" className="w-full bg-[#27AE60] hover:bg-[#229954]" disabled>
-                                    Bientot disponible
+                                    Bientôt disponible
                                 </Button>
                             </CardContent>
                         </Card>
@@ -188,10 +188,10 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                 <MessageSquare className="w-4 h-4 text-white" />
                             </div>
                             <div>
-                                <p className="font-semibold text-sm mb-1">Actualite de la mairie</p>
+                                <p className="font-semibold text-sm mb-1">Actualité de la mairie</p>
                                 <p className="text-xs text-muted-foreground leading-relaxed">
-                                    Reunion publique le 15 mars : presentation du projet d'amenagement du parc central.
-                                    Venez nombreux pour en discuter avec vos elus !
+                                    Réunion publique le 15 mars : présentation du projet d'aménagement du parc central.
+                                    Venez nombreux pour en discuter avec vos élus !
                                 </p>
                             </div>
                         </div>

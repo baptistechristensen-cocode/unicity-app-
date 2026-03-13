@@ -1,4 +1,4 @@
-import { ArrowLeft, MapPin, Calendar, Tag, MessageSquare } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, Tag } from 'lucide-react';
 import AppLayout from '@/layouts/app-layout';
 import StatusBadge, { SignalementStatus } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -38,16 +38,16 @@ interface SignalementShowProps {
 
 export default function SignalementShow({ signalement }: SignalementShowProps) {
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Tableau de bord', href: '/dashboard' },
-        { title: 'Signalements', href: '/signalements' },
+        { title: 'Accueil', href: '/dashboard' },
+        { title: 'Mes signalements', href: '/signalements' },
         { title: signalement.titre, href: `/signalements/${signalement.id}` },
     ];
 
     const getCategoryLabel = (category: string) => {
         const labels: { [key: string]: string } = {
             voirie: 'Voirie',
-            eclairage: 'Eclairage',
-            proprete: 'Proprete',
+            eclairage: 'Éclairage',
+            proprete: 'Propreté',
             autre: 'Autre',
         };
         return labels[category] || category;
@@ -66,8 +66,8 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
+            day: 'numeric',
+            month: 'long',
             year: 'numeric',
         });
     };
@@ -75,8 +75,8 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
     const formatDateTime = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
+            day: 'numeric',
+            month: 'long',
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
@@ -94,11 +94,20 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
 
     const getStatusLabel = (status: string) => {
         const labels: { [key: string]: string } = {
-            enregistre: 'Enregistre',
+            enregistre: 'Demande reçue',
             en_cours: 'Pris en charge',
-            resolu: 'Resolu',
+            resolu: 'Problème résolu',
         };
         return labels[status] || status;
+    };
+
+    const getStatusDescription = (status: string) => {
+        const descriptions: { [key: string]: string } = {
+            enregistre: 'Votre signalement a bien été enregistré. Les services municipaux vont l\'examiner.',
+            en_cours: 'Les équipes municipales travaillent actuellement sur ce problème.',
+            resolu: 'Ce problème a été résolu. Merci pour votre signalement !',
+        };
+        return descriptions[status] || '';
     };
 
     return (
@@ -110,9 +119,28 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
                 <Link href="/signalements">
                     <Button variant="ghost" className="mb-2">
                         <ArrowLeft className="w-4 h-4 mr-2" />
-                        Retour aux signalements
+                        Retour à mes signalements
                     </Button>
                 </Link>
+
+                {/* Bannière de statut */}
+                <div
+                    className="rounded-2xl p-4 flex items-start gap-3"
+                    style={{ backgroundColor: getStatusColor(signalement.status) + '15' }}
+                >
+                    <div
+                        className="w-3 h-3 rounded-full flex-shrink-0 mt-1"
+                        style={{ backgroundColor: getStatusColor(signalement.status) }}
+                    />
+                    <div>
+                        <p className="font-semibold" style={{ color: getStatusColor(signalement.status) }}>
+                            {getStatusLabel(signalement.status)}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-0.5">
+                            {getStatusDescription(signalement.status)}
+                        </p>
+                    </div>
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Colonne principale */}
@@ -126,7 +154,7 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
                                     className="w-full h-96 object-cover"
                                 />
                             ) : (
-                                <div className="w-full h-96 bg-muted flex items-center justify-center text-9xl">
+                                <div className="w-full h-64 bg-muted flex items-center justify-center text-9xl">
                                     {getCategoryIcon(signalement.category)}
                                 </div>
                             )}
@@ -142,34 +170,36 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
                                     <StatusBadge status={signalement.status} className="flex-shrink-0 ml-4" />
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                <div className="flex flex-wrap gap-4 mb-6">
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Tag className="w-4 h-4" />
                                         <span>{getCategoryIcon(signalement.category)} {getCategoryLabel(signalement.category)}</span>
                                     </div>
                                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                         <Calendar className="w-4 h-4" />
-                                        <span>{formatDate(signalement.created_at)}</span>
+                                        <span>Signalé le {formatDate(signalement.created_at)}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                        <MapPin className="w-4 h-4" />
-                                        <span>#{signalement.id}</span>
-                                    </div>
+                                    {signalement.location && (
+                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                            <MapPin className="w-4 h-4" />
+                                            <span>{signalement.location}</span>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <Separator className="mb-6" />
 
                                 <div>
-                                    <h3 className="font-semibold mb-3">Description</h3>
+                                    <h3 className="font-semibold mb-3">Description du problème</h3>
                                     <p className="text-muted-foreground leading-relaxed">{signalement.description}</p>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        {/* Historique du suivi */}
+                        {/* Suivi */}
                         <Card className="border-none shadow-md">
                             <CardContent className="p-6">
-                                <h3 className="font-semibold mb-6">Historique du suivi</h3>
+                                <h3 className="font-semibold mb-6">Suivi de votre demande</h3>
                                 <div className="relative">
                                     <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-border" />
                                     <div className="space-y-6">
@@ -201,30 +231,25 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
                     {/* Colonne laterale */}
                     <div className="space-y-6">
                         {/* Localisation */}
-                        <Card className="border-none shadow-md">
-                            <CardContent className="p-6">
-                                <h3 className="font-semibold mb-4">Localisation</h3>
-                                <div className="relative w-full h-48 rounded-lg overflow-hidden border border-border mb-3 bg-muted">
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <MapPin className="w-8 h-8 text-[#E74C3C]" />
-                                    </div>
-                                </div>
-                                {signalement.location && (
+                        {signalement.location && (
+                            <Card className="border-none shadow-md">
+                                <CardContent className="p-6">
+                                    <h3 className="font-semibold mb-4">Lieu du problème</h3>
                                     <div className="flex items-start gap-2 text-sm text-muted-foreground">
-                                        <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                                        <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#E74C3C]" />
                                         <span>{signalement.location}</span>
                                     </div>
-                                )}
-                            </CardContent>
-                        </Card>
+                                </CardContent>
+                            </Card>
+                        )}
 
-                        {/* Informations */}
+                        {/* Récapitulatif */}
                         <Card className="border-none shadow-md">
                             <CardContent className="p-6">
-                                <h3 className="font-semibold mb-4">Informations</h3>
+                                <h3 className="font-semibold mb-4">Récapitulatif</h3>
                                 <div className="space-y-3 text-sm">
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Signale par</span>
+                                        <span className="text-muted-foreground">Signalé par</span>
                                         <span className="font-medium">{signalement.user.name}</span>
                                     </div>
                                     <div className="flex justify-between">
@@ -232,30 +257,23 @@ export default function SignalementShow({ signalement }: SignalementShowProps) {
                                         <span className="font-medium">{formatDate(signalement.created_at)}</span>
                                     </div>
                                     <div className="flex justify-between">
-                                        <span className="text-muted-foreground">Reference</span>
-                                        <span className="font-medium">#{signalement.id}</span>
+                                        <span className="text-muted-foreground">Catégorie</span>
+                                        <span className="font-medium">{getCategoryLabel(signalement.category)}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-muted-foreground">Statut</span>
+                                        <StatusBadge status={signalement.status} />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        {/* Partage */}
-                        <Card className="border-none shadow-md">
-                            <CardContent className="p-6">
-                                <h3 className="font-semibold mb-4">Partager</h3>
-                                <p className="text-sm text-muted-foreground mb-4">
-                                    Partagez ce signalement avec vos voisins
-                                </p>
-                                <div className="flex gap-2">
-                                    <Button variant="outline" size="sm" className="flex-1">
-                                        Email
-                                    </Button>
-                                    <Button variant="outline" size="sm" className="flex-1">
-                                        Lien
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
+                        {/* Message rassurant */}
+                        <div className="rounded-2xl p-5 bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900">
+                            <p className="text-sm text-blue-800 dark:text-blue-300 leading-relaxed">
+                                💬 <strong>Besoin d'aide ?</strong> Pour toute question sur ce signalement, contactez la mairie en indiquant votre nom.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

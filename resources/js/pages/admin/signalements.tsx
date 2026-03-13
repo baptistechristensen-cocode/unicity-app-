@@ -109,47 +109,31 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
 
     const handleSaveUpdate = () => {
         if (!selectedSignalement) return;
-
         setProcessing(true);
         router.patch(`/admin/signalements/${selectedSignalement.id}`, {
             status: newStatus,
             comment: comment || undefined,
         }, {
-            onSuccess: () => {
-                setIsDialogOpen(false);
-                setProcessing(false);
-            },
-            onError: () => {
-                setProcessing(false);
-            },
+            onSuccess: () => { setIsDialogOpen(false); setProcessing(false); },
+            onError: () => setProcessing(false),
         });
     };
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleDateString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
+        return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
     const getCategoryLabel = (category: string) => {
         const labels: { [key: string]: string } = {
-            voirie: 'Voirie',
-            eclairage: 'Eclairage',
-            proprete: 'Proprete',
-            autre: 'Autre',
+            voirie: 'Voirie', eclairage: 'Éclairage', proprete: 'Propreté', autre: 'Autre',
         };
         return labels[category] || category;
     };
 
     const getCategoryIcon = (category: string) => {
         const icons: { [key: string]: string } = {
-            voirie: '🚧',
-            eclairage: '💡',
-            proprete: '🗑️',
-            autre: '📌',
+            voirie: '🚧', eclairage: '💡', proprete: '🗑️', autre: '📌',
         };
         return icons[category] || '📌';
     };
@@ -159,63 +143,52 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
             <Head title="Admin - Signalements" />
 
             <div className="mb-8">
-                <h1 className="text-3xl font-bold mb-2 text-[#2C2C2C] dark:text-neutral-100">
+                <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-neutral-100">
                     Signalements
                 </h1>
-                <p className="text-gray-600 dark:text-neutral-400">
+                <p className="text-gray-500 dark:text-neutral-400">
                     Gérez et traitez les signalements des citoyens
                 </p>
             </div>
 
             {/* Stats */}
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
-                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
-                    <CardContent className="p-4">
-                        <div className="text-2xl font-bold">{counts.total}</div>
-                        <div className="text-sm text-gray-500 dark:text-neutral-400">Total</div>
-                    </CardContent>
-                </Card>
-                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
-                    <CardContent className="p-4">
-                        <div className="text-2xl font-bold text-gray-500 dark:text-neutral-300">{counts.enregistre}</div>
-                        <div className="text-sm text-gray-500 dark:text-neutral-400">Enregistrés</div>
-                    </CardContent>
-                </Card>
-                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
-                    <CardContent className="p-4">
-                        <div className="text-2xl font-bold text-[#E67E22]">{counts.en_cours}</div>
-                        <div className="text-sm text-gray-500 dark:text-neutral-400">En cours</div>
-                    </CardContent>
-                </Card>
-                <Card className="border-none shadow-sm bg-white dark:bg-neutral-800">
-                    <CardContent className="p-4">
-                        <div className="text-2xl font-bold text-[#27AE60]">{counts.resolu}</div>
-                        <div className="text-sm text-gray-500 dark:text-neutral-400">Résolus</div>
-                    </CardContent>
-                </Card>
+                {[
+                    { label: 'Total',    value: counts.total,      color: 'text-gray-900 dark:text-neutral-100' },
+                    { label: 'Reçus',    value: counts.enregistre, color: 'text-gray-500 dark:text-neutral-400' },
+                    { label: 'En cours', value: counts.en_cours,   color: 'text-[#E67E22]' },
+                    { label: 'Résolus',  value: counts.resolu,     color: 'text-[#27AE60]' },
+                ].map(stat => (
+                    <Card key={stat.label} className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800">
+                        <CardContent className="p-4">
+                            <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
+                            <div className="text-sm text-gray-500 dark:text-neutral-500">{stat.label}</div>
+                        </CardContent>
+                    </Card>
+                ))}
             </div>
 
-            <Card className="border-none shadow-md bg-white dark:bg-neutral-800">
+            <Card className="border-none shadow-sm bg-white dark:bg-neutral-900 dark:border dark:border-neutral-800">
                 <CardHeader>
                     <div className="flex flex-col sm:flex-row gap-4">
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-neutral-500 w-5 h-5" />
                             <Input
                                 placeholder="Rechercher un signalement..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                className="pl-10"
+                                className="pl-10 dark:bg-neutral-800 dark:border-neutral-700"
                             />
                         </div>
                         <Select value={filterStatus} onValueChange={handleFilterChange}>
-                            <SelectTrigger className="w-full sm:w-[200px]">
+                            <SelectTrigger className="w-full sm:w-[200px] dark:bg-neutral-800 dark:border-neutral-700">
                                 <Filter className="w-4 h-4 mr-2" />
                                 <SelectValue placeholder="Filtrer par statut" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="tous">Tous les statuts</SelectItem>
-                                <SelectItem value="enregistre">Enregistré</SelectItem>
+                                <SelectItem value="enregistre">Reçu</SelectItem>
                                 <SelectItem value="en_cours">En cours</SelectItem>
                                 <SelectItem value="resolu">Résolu</SelectItem>
                             </SelectContent>
@@ -224,31 +197,31 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                 </CardHeader>
                 <CardContent>
                     {signalements.length === 0 ? (
-                        <div className="text-center py-12 text-gray-500 dark:text-neutral-400">
+                        <div className="text-center py-12 text-gray-400 dark:text-neutral-500">
                             Aucun signalement trouvé
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[80px]">ID</TableHead>
-                                        <TableHead>Titre</TableHead>
-                                        <TableHead>Catégorie</TableHead>
-                                        <TableHead>Citoyen</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Statut</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
+                                    <TableRow className="dark:border-neutral-800">
+                                        <TableHead className="w-[80px] dark:text-neutral-400">ID</TableHead>
+                                        <TableHead className="dark:text-neutral-400">Titre</TableHead>
+                                        <TableHead className="dark:text-neutral-400">Catégorie</TableHead>
+                                        <TableHead className="dark:text-neutral-400">Citoyen</TableHead>
+                                        <TableHead className="dark:text-neutral-400">Date</TableHead>
+                                        <TableHead className="dark:text-neutral-400">Statut</TableHead>
+                                        <TableHead className="text-right dark:text-neutral-400">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {signalements.map((sig) => (
-                                        <TableRow key={sig.id}>
-                                            <TableCell className="font-medium">#{sig.id}</TableCell>
-                                            <TableCell className="font-medium max-w-[250px] truncate">
+                                        <TableRow key={sig.id} className="dark:border-neutral-800 dark:hover:bg-neutral-800/50">
+                                            <TableCell className="font-medium text-gray-400 dark:text-neutral-500">#{sig.id}</TableCell>
+                                            <TableCell className="font-medium max-w-[250px] truncate text-gray-900 dark:text-neutral-100">
                                                 {sig.titre}
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="text-gray-600 dark:text-neutral-400">
                                                 {getCategoryIcon(sig.category)} {getCategoryLabel(sig.category)}
                                             </TableCell>
                                             <TableCell className="text-gray-500 dark:text-neutral-400">{sig.user.name}</TableCell>
@@ -262,30 +235,15 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                                 ) : (
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
-                                                            <button className="flex items-center gap-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[#1A5276]">
+                                                            <button className="flex items-center gap-1 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1A5276]">
                                                                 <StatusBadge status={sig.status} />
                                                                 <ChevronDown className="w-3 h-3 text-gray-400" />
                                                             </button>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent align="start">
-                                                            <DropdownMenuItem
-                                                                className={sig.status === 'enregistre' ? 'font-semibold' : ''}
-                                                                onClick={() => handleQuickStatusChange(sig, 'enregistre')}
-                                                            >
-                                                                Enregistré
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem
-                                                                className={sig.status === 'en_cours' ? 'font-semibold' : ''}
-                                                                onClick={() => handleQuickStatusChange(sig, 'en_cours')}
-                                                            >
-                                                                En cours
-                                                            </DropdownMenuItem>
-                                                            <DropdownMenuItem
-                                                                className={sig.status === 'resolu' ? 'font-semibold' : ''}
-                                                                onClick={() => handleQuickStatusChange(sig, 'resolu')}
-                                                            >
-                                                                Résolu
-                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem className={sig.status === 'enregistre' ? 'font-semibold' : ''} onClick={() => handleQuickStatusChange(sig, 'enregistre')}>Reçu</DropdownMenuItem>
+                                                            <DropdownMenuItem className={sig.status === 'en_cours' ? 'font-semibold' : ''} onClick={() => handleQuickStatusChange(sig, 'en_cours')}>En cours</DropdownMenuItem>
+                                                            <DropdownMenuItem className={sig.status === 'resolu' ? 'font-semibold' : ''} onClick={() => handleQuickStatusChange(sig, 'resolu')}>Résolu</DropdownMenuItem>
                                                         </DropdownMenuContent>
                                                     </DropdownMenu>
                                                 )}
@@ -293,15 +251,11 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                                             <TableCell className="text-right">
                                                 <div className="flex justify-end gap-2">
                                                     <Link href={`/signalements/${sig.id}`}>
-                                                        <Button size="sm" variant="ghost">
+                                                        <Button size="sm" variant="ghost" className="dark:text-neutral-400 dark:hover:bg-neutral-800">
                                                             <Eye className="w-4 h-4" />
                                                         </Button>
                                                     </Link>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        onClick={() => handleUpdateStatus(sig)}
-                                                    >
+                                                    <Button size="sm" variant="outline" className="dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800" onClick={() => handleUpdateStatus(sig)}>
                                                         Modifier
                                                     </Button>
                                                 </div>
@@ -315,54 +269,49 @@ export default function AdminSignalements({ signalements, counts, filters }: Adm
                 </CardContent>
             </Card>
 
-            {/* Dialog de mise a jour */}
+            {/* Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent>
+                <DialogContent className="dark:bg-neutral-900 dark:border-neutral-800">
                     <DialogHeader>
-                        <DialogTitle>Mettre à jour le statut</DialogTitle>
-                        <DialogDescription>Modifier le statut et ajouter un commentaire</DialogDescription>
+                        <DialogTitle className="dark:text-neutral-100">Mettre à jour le statut</DialogTitle>
+                        <DialogDescription className="dark:text-neutral-400">Modifier le statut et ajouter un commentaire</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                         {selectedSignalement && (
-                            <div className="bg-gray-50 dark:bg-neutral-700 p-3 rounded-lg">
-                                <div className="font-medium">{selectedSignalement.titre}</div>
-                                <div className="text-sm text-gray-500 dark:text-neutral-400">
-                                    #{selectedSignalement.id} - {selectedSignalement.user.name}
-                                </div>
+                            <div className="bg-gray-50 dark:bg-neutral-800 p-3 rounded-lg">
+                                <div className="font-medium text-gray-900 dark:text-neutral-100">{selectedSignalement.titre}</div>
+                                <div className="text-sm text-gray-500 dark:text-neutral-400">#{selectedSignalement.id} — {selectedSignalement.user.name}</div>
                             </div>
                         )}
                         <div className="space-y-2">
-                            <Label>Nouveau statut</Label>
+                            <Label className="dark:text-neutral-300">Nouveau statut</Label>
                             <Select value={newStatus} onValueChange={(v) => setNewStatus(v as SignalementStatus)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="dark:bg-neutral-800 dark:border-neutral-700">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="enregistre">Enregistré</SelectItem>
+                                    <SelectItem value="enregistre">Reçu</SelectItem>
                                     <SelectItem value="en_cours">En cours</SelectItem>
                                     <SelectItem value="resolu">Résolu</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Commentaire</Label>
+                            <Label className="dark:text-neutral-300">Commentaire</Label>
                             <Textarea
                                 placeholder="Ajoutez un commentaire optionnel..."
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
                                 rows={4}
+                                className="dark:bg-neutral-800 dark:border-neutral-700"
                             />
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                        <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800">
                             Annuler
                         </Button>
-                        <Button
-                            onClick={handleSaveUpdate}
-                            className="bg-[#1A5276] hover:bg-[#154360]"
-                            disabled={processing}
-                        >
+                        <Button onClick={handleSaveUpdate} className="bg-[#1A5276] hover:bg-[#154360] text-white" disabled={processing}>
                             {processing ? 'Enregistrement...' : 'Enregistrer'}
                         </Button>
                     </DialogFooter>

@@ -11,15 +11,15 @@ import { type BreadcrumbItem } from '@/types';
 import InputError from '@/components/input-error';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Tableau de bord', href: '/dashboard' },
-    { title: 'Signalements', href: '/signalements' },
+    { title: 'Accueil', href: '/dashboard' },
+    { title: 'Mes signalements', href: '/signalements' },
     { title: 'Nouveau', href: '/signalements/create' },
 ];
 
 const categories = [
     { id: 'voirie', label: 'Voirie', icon: Construction, color: '#E67E22' },
-    { id: 'eclairage', label: 'Eclairage', icon: Lightbulb, color: '#F39C12' },
-    { id: 'proprete', label: 'Proprete', icon: Trash2, color: '#27AE60' },
+    { id: 'eclairage', label: 'Éclairage', icon: Lightbulb, color: '#F39C12' },
+    { id: 'proprete', label: 'Propreté', icon: Trash2, color: '#27AE60' },
     { id: 'autre', label: 'Autre', icon: MoreHorizontal, color: '#95A5A6' },
 ];
 
@@ -76,14 +76,14 @@ export default function SignalementCreate() {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Nouveau signalement" />
+            <Head title="Signaler un problème" />
 
             <div className="flex h-full flex-1 flex-col gap-4 p-4">
                 <Card className="border-none shadow-lg max-w-4xl mx-auto w-full">
                     <CardHeader>
-                        <CardTitle className="text-2xl">Signaler un probleme</CardTitle>
+                        <CardTitle className="text-2xl">Signaler un problème</CardTitle>
                         <CardDescription>
-                            Remplissez ce formulaire pour signaler un probleme dans votre quartier
+                            Décrivez le problème que vous avez constaté dans votre quartier. Nous nous en occupons !
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -91,11 +91,11 @@ export default function SignalementCreate() {
                             {/* Titre */}
                             <div className="space-y-2">
                                 <Label htmlFor="titre">
-                                    Titre du signalement <span className="text-red-500">*</span>
+                                    En quelques mots, quel est le problème ? <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     id="titre"
-                                    placeholder="Ex: Nid de poule avenue Victor Hugo"
+                                    placeholder="Ex : Nid de poule avenue Victor Hugo"
                                     value={titre}
                                     onChange={(e) => setTitre(e.target.value)}
                                     required
@@ -107,7 +107,7 @@ export default function SignalementCreate() {
                             {/* Categorie */}
                             <div className="space-y-3">
                                 <Label>
-                                    Categorie <span className="text-red-500">*</span>
+                                    De quel type de problème s'agit-il ? <span className="text-red-500">*</span>
                                 </Label>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                                     {categories.map((cat) => {
@@ -139,11 +139,11 @@ export default function SignalementCreate() {
                             {/* Description */}
                             <div className="space-y-2">
                                 <Label htmlFor="description">
-                                    Description detaillee <span className="text-red-500">*</span>
+                                    Décrivez le problème <span className="text-red-500">*</span>
                                 </Label>
                                 <Textarea
                                     id="description"
-                                    placeholder="Decrivez le probleme en detail..."
+                                    placeholder="Décrivez ce que vous avez observé, depuis quand, et tout détail utile pour qu'on puisse intervenir rapidement..."
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     required
@@ -151,7 +151,7 @@ export default function SignalementCreate() {
                                     className="resize-none"
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    Soyez le plus precis possible pour faciliter la prise en charge
+                                    Plus vous êtes précis, plus vite nous pouvons intervenir.
                                 </p>
                                 <InputError message={errors.description} />
                             </div>
@@ -159,13 +159,13 @@ export default function SignalementCreate() {
                             {/* Location */}
                             <div className="space-y-2">
                                 <Label htmlFor="location">
-                                    Adresse / Localisation
+                                    Où se trouve le problème ?
                                 </Label>
                                 <div className="relative">
                                     <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                                     <Input
                                         id="location"
-                                        placeholder="Ex: 12 avenue Victor Hugo"
+                                        placeholder="Ex : 12 avenue Victor Hugo, près de la pharmacie"
                                         value={location}
                                         onChange={(e) => setLocation(e.target.value)}
                                         className="h-11 pl-10"
@@ -176,12 +176,12 @@ export default function SignalementCreate() {
 
                             {/* Upload photo */}
                             <div className="space-y-2">
-                                <Label>Photo (optionnel)</Label>
+                                <Label>Ajouter une photo (facultatif)</Label>
                                 {photoPreview ? (
                                     <div className="relative">
                                         <img
                                             src={photoPreview}
-                                            alt="Apercu"
+                                            alt="Aperçu"
                                             className="w-full h-64 object-cover rounded-lg"
                                         />
                                         <button
@@ -197,9 +197,9 @@ export default function SignalementCreate() {
                                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                             <Upload className="w-10 h-10 text-muted-foreground mb-3" />
                                             <p className="mb-2 text-sm text-muted-foreground">
-                                                <span className="font-semibold">Cliquez pour telecharger</span> ou glissez-deposez
+                                                <span className="font-semibold">Appuyez ici pour ajouter une photo</span>
                                             </p>
-                                            <p className="text-xs text-muted-foreground">PNG, JPG ou JPEG (max. 5MB)</p>
+                                            <p className="text-xs text-muted-foreground">Une photo aide à mieux comprendre le problème</p>
                                         </div>
                                         <input
                                             type="file"
@@ -225,7 +225,7 @@ export default function SignalementCreate() {
                                     size="lg"
                                     disabled={!titre || !category || !description || processing}
                                 >
-                                    {processing ? 'Envoi...' : 'Envoyer le signalement'}
+                                    {processing ? 'Envoi en cours...' : 'Envoyer mon signalement'}
                                 </Button>
                             </div>
                         </form>

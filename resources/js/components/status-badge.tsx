@@ -9,9 +9,9 @@ interface StatusBadgeProps {
 
 export default function StatusBadge({ status, className = '' }: StatusBadgeProps) {
   const statusConfig = {
-    enregistre: { label: 'Enregistré', color: 'bg-gray-500' },
-    en_cours:   { label: 'En cours',   color: 'bg-[#E67E22]' },
-    resolu:     { label: 'Résolu',     color: 'bg-[#27AE60]' },
+    enregistre: { label: 'Reçu',        color: 'bg-gray-500' },
+    en_cours:   { label: 'En cours',    color: 'bg-[#E67E22]' },
+    resolu:     { label: 'Résolu ✓',   color: 'bg-[#27AE60]' },
   };
 
   const config = statusConfig[status];

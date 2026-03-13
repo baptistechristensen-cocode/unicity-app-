@@ -13,19 +13,19 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { AlertTriangle, LayoutGrid, Settings } from 'lucide-react';
+import { AlertCircle, Home, Settings } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Tableau de bord',
+        title: 'Accueil',
         href: dashboard(),
-        icon: LayoutGrid,
+        icon: Home,
     },
     {
-        title: 'Signalements',
+        title: 'Mes signalements',
         href: '/signalements',
-        icon: AlertTriangle,
+        icon: AlertCircle,
     },
 ];
 
