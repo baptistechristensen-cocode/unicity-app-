@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminEvenementController;
+use App\Http\Controllers\Admin\AdminPublicationController;
 use App\Http\Controllers\Admin\AdminSignalementController;
+use App\Http\Controllers\Admin\AdminSondageController;
 use App\Http\Controllers\Admin\AdminUserController;
+use App\Http\Controllers\EvenementController;
+use App\Http\Controllers\PublicationController;
 use App\Http\Controllers\SignalementController;
+use App\Http\Controllers\SondageController;
 use App\Models\Signalement;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -26,9 +31,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->get();
 
         $stats = [
-            'total' => Signalement::where('user_id', auth()->id())->count(),
+            'total'    => Signalement::where('user_id', auth()->id())->count(),
             'en_cours' => Signalement::where('user_id', auth()->id())->where('status', 'en_cours')->count(),
-            'resolu' => Signalement::where('user_id', auth()->id())->where('status', 'resolu')->count(),
+            'resolu'   => Signalement::where('user_id', auth()->id())->where('status', 'resolu')->count(),
         ];
 
         return Inertia::render('dashboard', [
@@ -37,19 +42,51 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('dashboard');
 
-    // Signalements routes
+    // Signalements
     Route::get('signalements', [SignalementController::class, 'index'])->name('signalements.index');
     Route::get('signalements/create', [SignalementController::class, 'create'])->name('signalements.create');
     Route::post('signalements', [SignalementController::class, 'store'])->name('signalements.store');
     Route::get('signalements/{signalement}', [SignalementController::class, 'show'])->name('signalements.show');
     Route::patch('signalements/{signalement}', [SignalementController::class, 'update'])->name('signalements.update');
+
+    // Sondages
+    Route::get('sondages', [SondageController::class, 'index'])->name('sondages.index');
+    Route::get('sondages/{sondage}/resultats', [SondageController::class, 'resultats'])->name('sondages.resultats');
+    Route::get('sondages/{sondage}', [SondageController::class, 'show'])->name('sondages.show');
+    Route::post('sondages/{sondage}/repondre', [SondageController::class, 'store'])->name('sondages.store');
+
+    // Agenda
+    Route::get('agenda', [EvenementController::class, 'index'])->name('agenda.index');
+    Route::get('agenda/{evenement}', [EvenementController::class, 'show'])->name('agenda.show');
+    Route::post('agenda/{evenement}/interet', [EvenementController::class, 'toggleInteret'])->name('agenda.interet');
+
+    // Discussion
+    Route::get('discussion', [PublicationController::class, 'index'])->name('discussion.index');
+    Route::post('publications/{publication}/like', [PublicationController::class, 'toggleLike'])->name('publications.like');
 });
 
-// Admin routes — tableau de bord signalements (Admin, Elu, Agent)
+// Admin routes — tableau de bord, signalements, sondages, agenda, publications (Admin, Elu, Agent)
 Route::middleware(['auth', 'verified', 'role:Admin,Elu,Agent'])->prefix('admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index'])->name('admin.index');
+
     Route::get('signalements', [AdminSignalementController::class, 'index'])->name('admin.signalements.index');
     Route::patch('signalements/{signalement}', [AdminSignalementController::class, 'update'])->name('admin.signalements.update');
+
+    Route::get('sondages', [AdminSondageController::class, 'index'])->name('admin.sondages.index');
+    Route::get('sondages/create', [AdminSondageController::class, 'create'])->name('admin.sondages.create');
+    Route::post('sondages', [AdminSondageController::class, 'store'])->name('admin.sondages.store');
+    Route::patch('sondages/{sondage}', [AdminSondageController::class, 'update'])->name('admin.sondages.update');
+    Route::delete('sondages/{sondage}', [AdminSondageController::class, 'destroy'])->name('admin.sondages.destroy');
+
+    Route::get('agenda', [AdminEvenementController::class, 'index'])->name('admin.agenda.index');
+    Route::get('agenda/create', [AdminEvenementController::class, 'create'])->name('admin.agenda.create');
+    Route::post('agenda', [AdminEvenementController::class, 'store'])->name('admin.agenda.store');
+    Route::patch('agenda/{evenement}', [AdminEvenementController::class, 'update'])->name('admin.agenda.update');
+    Route::delete('agenda/{evenement}', [AdminEvenementController::class, 'destroy'])->name('admin.agenda.destroy');
+
+    Route::get('publications', [AdminPublicationController::class, 'index'])->name('admin.publications.index');
+    Route::post('publications', [AdminPublicationController::class, 'store'])->name('admin.publications.store');
+    Route::delete('publications/{publication}', [AdminPublicationController::class, 'destroy'])->name('admin.publications.destroy');
 });
 
 // Admin routes — gestion utilisateurs (Admin uniquement)

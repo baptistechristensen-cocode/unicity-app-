@@ -5,7 +5,7 @@ import { AdminSidebar } from '@/components/admin-sidebar';
 import { useAppearance } from '@/hooks/use-appearance';
 import { type SharedData } from '@/types';
 import { Link, router, usePage } from '@inertiajs/react';
-import { Home, AlertCircle, BarChart3, Calendar, Users, LogOut } from 'lucide-react';
+import { Home, AlertCircle, BarChart3, Calendar, Users, LogOut, MessageCircle } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { type ReactNode, useMemo } from 'react';
 
@@ -30,6 +30,7 @@ const MLP_LABELS: Record<string, string> = {
     'Signalements':    '🦄 Incidents Magiques',
     'Sondages':        '🌈 Sondages',
     'Agenda':          '🌸 Agenda Fleuri',
+    'Publications':    '📢 Gazette Poney',
     'Utilisateurs':    '🐴 Poneys',
     'Retour au site':  '🏠 Retour au Haras',
 };
@@ -50,10 +51,11 @@ export default function AdminLayout({ children, currentPage = '' }: AdminLayoutP
     const mlp = resolvedAppearance === 'pony';
 
     const menuItems = useMemo(() => [
-        { icon: Home,        label: 'Tableau de bord', href: '/admin',              page: 'dashboard',    disabled: false },
-        { icon: AlertCircle, label: 'Signalements',    href: '/admin/signalements', page: 'signalements', disabled: false },
-        { icon: BarChart3,   label: 'Sondages',        href: '#',                   page: 'sondages',     disabled: true  },
-        { icon: Calendar,    label: 'Agenda',          href: '#',                   page: 'agenda',       disabled: true  },
+        { icon: Home,         label: 'Tableau de bord', href: '/admin',              page: 'dashboard',    disabled: false },
+        { icon: AlertCircle,  label: 'Signalements',    href: '/admin/signalements', page: 'signalements', disabled: false },
+        { icon: BarChart3,    label: 'Sondages',        href: '/admin/sondages',     page: 'sondages',     disabled: false },
+        { icon: Calendar,     label: 'Agenda',          href: '/admin/agenda',       page: 'agenda',       disabled: false },
+        { icon: MessageCircle, label: 'Publications',   href: '/admin/publications', page: 'publications', disabled: false },
         ...(isAdmin ? [{ icon: Users, label: 'Utilisateurs', href: '/admin/utilisateurs', page: 'utilisateurs', disabled: false }] : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     ], [isAdmin]);

@@ -39,9 +39,9 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
 
     const quickActions = [
         { icon: AlertCircle,   title: 'Signaler un problème',     description: 'Voirie, éclairage, propreté…', color: '#E67E22', href: '/signalements/create', disabled: false },
-        { icon: Vote,          title: 'Sondages citoyens',        description: 'Donnez votre avis',           color: '#1A5276', href: '#',                    disabled: true  },
-        { icon: Calendar,      title: 'Agenda de la ville',       description: 'Événements à venir',          color: '#27AE60', href: '#',                    disabled: true  },
-        { icon: MessageSquare, title: 'Actualités',               description: 'Infos de la mairie',          color: '#9B59B6', href: '#',                    disabled: true  },
+        { icon: Vote,          title: 'Sondages citoyens',        description: 'Donnez votre avis',           color: '#1A5276', href: '/sondages',            disabled: false },
+        { icon: Calendar,      title: 'Agenda de la ville',       description: 'Événements à venir',          color: '#27AE60', href: '/agenda',              disabled: false },
+        { icon: MessageSquare, title: 'Actualités',               description: 'Infos de la mairie',          color: '#9B59B6', href: '/discussion',          disabled: false },
     ];
 
     return (

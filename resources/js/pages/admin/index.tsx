@@ -31,6 +31,8 @@ interface AdminDashboardProps {
         totalSignalements: number;
         totalUsers: number;
         usersThisMonth: number;
+        sondagesActifs: number;
+        evenementsAVenir: number;
     };
     chartData: ChartDataItem[];
     recentSignalements: Signalement[];
@@ -54,10 +56,10 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
         },
         {
             label: 'Événements à venir',
-            value: '0',
+            value: kpis.evenementsAVenir.toString(),
             icon: Calendar,
             color: '#27AE60',
-            trend: 'Bientôt disponible',
+            trend: `${kpis.sondagesActifs} sondage${kpis.sondagesActifs !== 1 ? 's' : ''} actif${kpis.sondagesActifs !== 1 ? 's' : ''}`,
         },
         {
             label: 'Citoyens inscrits',
@@ -224,21 +226,25 @@ export default function AdminDashboard({ kpis, chartData, recentSignalements }: 
                     </Card>
                 </Link>
 
-                <Card className="border-none shadow-sm bg-gradient-to-br from-[#1A5276] to-[#154360] text-white cursor-not-allowed opacity-60 h-full">
-                    <CardContent className="p-6">
-                        <BarChart3 className="w-8 h-8 mb-3" />
-                        <h3 className="font-semibold text-lg mb-2">Créer un sondage</h3>
-                        <p className="text-white/80 text-sm">Bientôt disponible</p>
-                    </CardContent>
-                </Card>
+                <Link href="/admin/sondages/create">
+                    <Card className="border-none shadow-sm bg-gradient-to-br from-[#1A5276] to-[#154360] text-white cursor-pointer hover:shadow-md transition-shadow h-full">
+                        <CardContent className="p-6">
+                            <BarChart3 className="w-8 h-8 mb-3" />
+                            <h3 className="font-semibold text-lg mb-2">Créer un sondage</h3>
+                            <p className="text-white/80 text-sm">Publiez une consultation citoyenne</p>
+                        </CardContent>
+                    </Card>
+                </Link>
 
-                <Card className="border-none shadow-sm bg-gradient-to-br from-[#27AE60] to-[#229954] text-white cursor-not-allowed opacity-60 h-full">
-                    <CardContent className="p-6">
-                        <Calendar className="w-8 h-8 mb-3" />
-                        <h3 className="font-semibold text-lg mb-2">Publier un événement</h3>
-                        <p className="text-white/80 text-sm">Bientôt disponible</p>
-                    </CardContent>
-                </Card>
+                <Link href="/admin/agenda/create">
+                    <Card className="border-none shadow-sm bg-gradient-to-br from-[#27AE60] to-[#229954] text-white cursor-pointer hover:shadow-md transition-shadow h-full">
+                        <CardContent className="p-6">
+                            <Calendar className="w-8 h-8 mb-3" />
+                            <h3 className="font-semibold text-lg mb-2">Publier un événement</h3>
+                            <p className="text-white/80 text-sm">Ajoutez un événement à l'agenda</p>
+                        </CardContent>
+                    </Card>
+                </Link>
             </div>
         </AdminLayout>
     );

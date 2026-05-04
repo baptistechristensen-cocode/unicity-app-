@@ -8,27 +8,23 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    SidebarGroup,
-    SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { type SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { AlertCircle, BarChart3, Calendar, Home, Users } from 'lucide-react';
+import { AlertCircle, BarChart3, Calendar, Home, MessageCircle, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 export function AdminSidebar() {
     const { auth } = usePage<SharedData>().props;
     const isAdmin = auth.user?.role === 'Admin';
 
-    const activeItems: NavItem[] = [
-        { title: 'Tableau de bord', href: '/admin',              icon: Home        },
-        { title: 'Signalements',    href: '/admin/signalements', icon: AlertCircle },
+    const mainItems: NavItem[] = [
+        { title: 'Tableau de bord', href: '/admin',              icon: Home          },
+        { title: 'Signalements',    href: '/admin/signalements', icon: AlertCircle   },
+        { title: 'Sondages',        href: '/admin/sondages',     icon: BarChart3     },
+        { title: 'Agenda',          href: '/admin/agenda',       icon: Calendar      },
+        { title: 'Publications',    href: '/admin/publications', icon: MessageCircle },
         ...(isAdmin ? [{ title: 'Utilisateurs', href: '/admin/utilisateurs', icon: Users }] : []),
-    ];
-
-    const disabledItems = [
-        { title: 'Sondages', icon: BarChart3 },
-        { title: 'Agenda',   icon: Calendar  },
     ];
 
     return (
@@ -47,28 +43,7 @@ export function AdminSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={activeItems} label="Administration" />
-
-                {/* Items désactivés */}
-                <SidebarGroup className="px-2 py-0">
-                    <SidebarGroupLabel>Bientôt disponible</SidebarGroupLabel>
-                    <SidebarMenu>
-                        {disabledItems.map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                                <SidebarMenuButton
-                                    disabled
-                                    tooltip={{ children: item.title }}
-                                    className="opacity-40 cursor-not-allowed"
-                                >
-                                    <item.icon />
-                                    <span>{item.title}</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
-                </SidebarGroup>
-
-                {/* Retour au site */}
+                <NavMain items={mainItems} label="Administration" />
                 <NavMain items={[{ title: 'Retour au site', href: '/dashboard', icon: Home }]} label="Navigation" />
             </SidebarContent>
 
