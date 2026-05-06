@@ -17,6 +17,9 @@ use Laravel\Fortify\Features;
 
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
