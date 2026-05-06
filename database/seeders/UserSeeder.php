@@ -20,13 +20,14 @@ class UserSeeder extends Seeder
         $adminRole   = Role::firstOrCreate(['name' => 'Admin']);
         $eluRole     = Role::firstOrCreate(['name' => 'Elu']);
 
-        // Citoyen test user
+        // Citoyen test user (actif pour les tests)
         $citoyen = User::firstOrCreate(
             ['email' => 'citoyen@test.com'],
             [
-                'name' => 'Citoyen Test',
-                'password' => Hash::make('password'),
-                'role' => 'Citoyen',
+                'name'      => 'Citoyen Test',
+                'password'  => Hash::make('password'),
+                'role'      => 'Citoyen',
+                'is_active' => true,
             ]
         );
         $citoyen->assignRole($citoyenRole);
@@ -35,9 +36,10 @@ class UserSeeder extends Seeder
         $agent = User::firstOrCreate(
             ['email' => 'agent@test.com'],
             [
-                'name' => 'Agent Test',
-                'password' => Hash::make('password'),
-                'role' => 'Agent',
+                'name'      => 'Agent Test',
+                'password'  => Hash::make('password'),
+                'role'      => 'Agent',
+                'is_active' => true,
             ]
         );
         $agent->assignRole($agentRole);
@@ -46,9 +48,10 @@ class UserSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['email' => 'admin@test.com'],
             [
-                'name' => 'Admin Test',
-                'password' => Hash::make('password'),
-                'role' => 'Admin',
+                'name'      => 'Admin Test',
+                'password'  => Hash::make('password'),
+                'role'      => 'Admin',
+                'is_active' => true,
             ]
         );
         $admin->assignRole($adminRole);
@@ -57,9 +60,10 @@ class UserSeeder extends Seeder
         $elu = User::firstOrCreate(
             ['email' => 'elu@test.com'],
             [
-                'name' => 'Jean Dupont (Elu)',
-                'password' => Hash::make('password'),
-                'role' => 'Elu',
+                'name'      => 'Jean Dupont (Elu)',
+                'password'  => Hash::make('password'),
+                'role'      => 'Elu',
+                'is_active' => true,
             ]
         );
         $elu->assignRole($eluRole);

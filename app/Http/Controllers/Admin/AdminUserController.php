@@ -14,7 +14,8 @@ class AdminUserController extends Controller
     public function index(Request $request): Response
     {
         $search = $request->query('search');
-        $role = $request->query('role');
+        $role   = $request->query('role');
+        $status = $request->query('status');
 
         $query = User::orderBy('created_at', 'desc');
 
@@ -29,10 +30,15 @@ class AdminUserController extends Controller
             $query->where('role', $role);
         }
 
-        $users = $query->get(['id', 'name', 'email', 'role', 'created_at']);
+        if ($status === 'en_attente') {
+            $query->where('is_active', false);
+        }
+
+        $users = $query->get(['id', 'name', 'email', 'role', 'is_active', 'created_at']);
 
         $counts = [
             'total'       => User::count(),
+            'en_attente'  => User::where('is_active', false)->count(),
             'Citoyen'     => User::where('role', 'Citoyen')->count(),
             'Association' => User::where('role', 'Association')->count(),
             'Agent'       => User::where('role', 'Agent')->count(),
@@ -43,7 +49,7 @@ class AdminUserController extends Controller
         return Inertia::render('admin/utilisateurs', [
             'users'   => $users,
             'counts'  => $counts,
-            'filters' => ['search' => $search, 'role' => $role],
+            'filters' => ['search' => $search, 'role' => $role, 'status' => $status],
         ]);
     }
 
@@ -55,6 +61,19 @@ class AdminUserController extends Controller
 
         $user->update(['role' => $validated['role']]);
 
-        return redirect()->back()->with('success', 'Role mis a jour');
+        return redirect()->back()->with('success', 'Rôle mis à jour');
+    }
+
+    public function toggleActive(User $user): RedirectResponse
+    {
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'Vous ne pouvez pas désactiver votre propre compte.');
+        }
+
+        $user->update(['is_active' => ! $user->is_active]);
+
+        $message = $user->is_active ? 'Compte activé.' : 'Compte désactivé.';
+
+        return redirect()->back()->with('success', $message);
     }
 }

@@ -22,7 +22,13 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// Page accessible après connexion mais avant validation du compte
+Route::middleware(['auth'])->get('/compte-en-attente', function () {
+    return Inertia::render('compte-en-attente');
+})->name('compte.en-attente');
+
+// Routes citoyennes — compte doit être actif
+Route::middleware(['auth', 'verified', 'active.user'])->group(function () {
     Route::get('dashboard', function () {
         $recentSignalements = Signalement::with('user')
             ->where('user_id', auth()->id())
@@ -87,9 +93,12 @@ Route::middleware(['auth', 'verified', 'role:Admin,Elu,Agent'])->prefix('admin')
     Route::get('publications', [AdminPublicationController::class, 'index'])->name('admin.publications.index');
     Route::post('publications', [AdminPublicationController::class, 'store'])->name('admin.publications.store');
     Route::delete('publications/{publication}', [AdminPublicationController::class, 'destroy'])->name('admin.publications.destroy');
+
+    // Validation des comptes — accessible à Admin, Elu et Agent
+    Route::patch('utilisateurs/{user}/toggle-active', [AdminUserController::class, 'toggleActive'])->name('admin.utilisateurs.toggle-active');
 });
 
-// Admin routes — gestion utilisateurs (Admin uniquement)
+// Admin routes — gestion utilisateurs complète (Admin uniquement)
 Route::middleware(['auth', 'verified', 'role:Admin'])->prefix('admin')->group(function () {
     Route::get('utilisateurs', [AdminUserController::class, 'index'])->name('admin.utilisateurs.index');
     Route::patch('utilisateurs/{user}', [AdminUserController::class, 'updateRole'])->name('admin.utilisateurs.update');

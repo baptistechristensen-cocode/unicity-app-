@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(php artisan:*)",
+      "Bash(git:*)",
+      "Bash(COMPOSER_MEMORY_LIMIT=-1 composer install:*)",
+      "Bash(xargs ls:*)",
+      "Bash(docker build:*)",
+      "Bash(composer install:*)",
+      "Bash(DB_URL=\"postgresql://neondb_owner:npg_M2HNogVU8sKd@ep-young-waterfall-ab0e4v7m-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require\" DB_CONNECTION=pgsql php artisan:*)",
+      "Bash(export:*)",
+      "Bash(npx tsc:*)",
+      "Bash(chmod 644 /Users/baptistechristensen/Desktop/unicity/UnicityApp/resources/js/pages/signalements/create.tsx)",
+      "Bash(grep -n \"status\\\\|check\\\\|CHECK\" /Users/baptistechristensen/Desktop/unicity/UnicityApp/database/migrations/*.php)"
+    ]
+  }
+}
