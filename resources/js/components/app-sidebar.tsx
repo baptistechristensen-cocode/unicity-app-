@@ -13,20 +13,15 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem, type SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { AlertCircle, Home, Settings } from 'lucide-react';
+import { AlertCircle, BarChart3, Calendar, Home, MessageCircle, Settings } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
-    {
-        title: 'Accueil',
-        href: dashboard(),
-        icon: Home,
-    },
-    {
-        title: 'Mes signalements',
-        href: '/signalements',
-        icon: AlertCircle,
-    },
+    { title: 'Accueil',          href: dashboard(),     icon: Home          },
+    { title: 'Mes signalements', href: '/signalements', icon: AlertCircle   },
+    { title: 'Sondages',         href: '/sondages',     icon: BarChart3     },
+    { title: 'Agenda',           href: '/agenda',       icon: Calendar      },
+    { title: 'Discussion',       href: '/discussion',   icon: MessageCircle },
 ];
 
 export function AppSidebar() {
