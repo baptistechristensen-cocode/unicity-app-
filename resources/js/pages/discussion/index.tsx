@@ -206,7 +206,7 @@ export default function DiscussionIndex({ publications }: DiscussionIndexProps) 
                                 <p className="text-sm text-white/80 mb-4">
                                     Activez les notifications pour ne rien manquer des actualités de Novaville.
                                 </p>
-                                <Button variant="outline" size="sm" className="w-full border-white/30 text-white hover:bg-white/10 dark:text-white dark:border-white/30">
+                                <Button variant="outline" size="sm" className="w-full bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white">
                                     Activer les notifications
                                 </Button>
                             </CardContent>
