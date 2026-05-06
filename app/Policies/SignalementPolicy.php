@@ -9,7 +9,8 @@ class SignalementPolicy
 {
     public function view(User $user, Signalement $signalement): bool
     {
-        return true;
+        return $user->id === $signalement->user_id
+            || $user->hasAnyRole(['Admin', 'Elu', 'Agent']);
     }
 
     public function update(User $user, Signalement $signalement): bool
