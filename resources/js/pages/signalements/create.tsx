@@ -12,7 +12,7 @@ import InputError from '@/components/input-error';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Accueil', href: '/dashboard' },
-    { title: 'Mes signalements', href: '/signalements' },
+    { title: 'Signalements', href: '/signalements' },
     { title: 'Nouveau', href: '/signalements/create' },
 ];
 

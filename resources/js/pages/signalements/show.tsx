@@ -40,7 +40,7 @@ interface SignalementShowProps {
 export default function SignalementShow({ signalement }: SignalementShowProps) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Accueil', href: '/dashboard' },
-        { title: 'Mes signalements', href: '/signalements' },
+        { title: 'Signalements', href: '/signalements' },
         { title: signalement.titre, href: `/signalements/${signalement.id}` },
     ];
 

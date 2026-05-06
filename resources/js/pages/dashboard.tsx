@@ -114,7 +114,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                     <div className="lg:col-span-3 flex flex-col gap-4">
                         <div className="flex items-center justify-between">
                             <div>
-                                <h2 className="font-semibold text-lg">Mes signalements</h2>
+                                <h2 className="font-semibold text-lg">Signalements</h2>
                                 <p className="text-sm text-muted-foreground">Suivez l'avancement de vos demandes</p>
                             </div>
                             {recentSignalements.length > 0 && (
