@@ -137,7 +137,7 @@ export default function Dashboard({ recentSignalements, stats }: DashboardProps)
                                         <p className="text-muted-foreground text-xs mt-1">Vous pouvez signaler un problème en quelques secondes</p>
                                     </div>
                                     <Link href="/signalements/create">
-                                        <Button className="bg-[#E67E22] hover:bg-[#D35400] mt-1">
+                                        <Button className="bg-[#E67E22] hover:bg-[#D35400] text-white mt-1">
                                             <Plus className="w-4 h-4 mr-2" />
                                             Faire mon premier signalement
                                         </Button>

@@ -14,31 +14,38 @@ class SignalementController extends Controller
     public function index(Request $request): Response
     {
         $status = $request->query('status');
+        $mine   = $request->boolean('mine');
 
-        $query = Signalement::with('user')
-            ->orderBy('created_at', 'desc');
+        $query = Signalement::with('user')->orderBy('created_at', 'desc');
+
+        if ($mine) {
+            $query->where('user_id', auth()->id());
+        }
 
         if ($status === 'resolu') {
             $query->where('status', 'resolu');
-        } elseif ($status && in_array($status, ['enregistre', 'en_cours'])) {
+        } elseif ($status && in_array($status, ['enregistre', 'en_cours', 'rejete'])) {
             $query->where('status', $status);
         } else {
-            $query->where('status', '!=', 'resolu');
+            $query->whereNotIn('status', ['resolu', 'rejete']);
         }
 
         $signalements = $query->paginate(12)->withQueryString();
 
+        $base = $mine ? Signalement::where('user_id', auth()->id()) : new Signalement;
+
         $counts = [
-            'total' => Signalement::where('status', '!=', 'resolu')->count(),
-            'enregistre' => Signalement::where('status', 'enregistre')->count(),
-            'en_cours' => Signalement::where('status', 'en_cours')->count(),
-            'resolu' => Signalement::where('status', 'resolu')->count(),
+            'total'      => (clone $base)->whereNotIn('status', ['resolu', 'rejete'])->count(),
+            'enregistre' => (clone $base)->where('status', 'enregistre')->count(),
+            'en_cours'   => (clone $base)->where('status', 'en_cours')->count(),
+            'resolu'     => (clone $base)->where('status', 'resolu')->count(),
         ];
 
         return Inertia::render('signalements/index', [
-            'signalements' => $signalements,
-            'counts' => $counts,
+            'signalements'  => $signalements,
+            'counts'        => $counts,
             'currentStatus' => $status,
+            'mine'          => $mine,
         ]);
     }
 

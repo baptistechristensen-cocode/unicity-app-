@@ -284,7 +284,7 @@ export default function AdminPublications({ publications }: AdminPublicationsPro
                                                     <AlertDialogCancel>Annuler</AlertDialogCancel>
                                                     <AlertDialogAction
                                                         onClick={() => handleDelete(pub.id)}
-                                                        className="bg-red-500 hover:bg-red-600"
+                                                        className="bg-red-500 hover:bg-red-600 text-white"
                                                     >
                                                         Supprimer
                                                     </AlertDialogAction>

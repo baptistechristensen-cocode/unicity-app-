@@ -182,7 +182,7 @@ export default function AdminAgenda({ evenements, counts }: AdminAgendaProps) {
                                                     <AlertDialogCancel>Annuler</AlertDialogCancel>
                                                     <AlertDialogAction
                                                         onClick={() => handleDelete(evt.id)}
-                                                        className="bg-red-500 hover:bg-red-600"
+                                                        className="bg-red-500 hover:bg-red-600 text-white"
                                                     >
                                                         Supprimer
                                                     </AlertDialogAction>

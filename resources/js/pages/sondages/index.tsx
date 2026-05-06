@@ -85,7 +85,7 @@ export default function SondageIndex({ sondages, counts, currentFilter }: Sondag
 
                 {/* Filters */}
                 <Tabs value={currentFilter || 'actif'} onValueChange={handleFilterChange}>
-                    <TabsList className="bg-card h-auto p-1">
+                    <TabsList className="h-auto p-1">
                         <TabsTrigger value="actif" className="px-6">
                             Actifs ({counts.actif})
                         </TabsTrigger>

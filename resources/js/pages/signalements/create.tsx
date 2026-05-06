@@ -221,7 +221,7 @@ export default function SignalementCreate() {
                                 </Link>
                                 <Button
                                     type="submit"
-                                    className="flex-1 bg-[#E67E22] hover:bg-[#D35400]"
+                                    className="flex-1 bg-[#E67E22] hover:bg-[#D35400] text-white"
                                     size="lg"
                                     disabled={!titre || !category || !description || processing}
                                 >
