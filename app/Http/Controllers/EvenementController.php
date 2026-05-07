@@ -14,34 +14,43 @@ class EvenementController extends Controller
     public function index(Request $request): Response
     {
         $theme = $request->query('theme');
+        $mois  = (int) $request->query('mois',  now()->month);
+        $annee = (int) $request->query('annee', now()->year);
+        $vue   = $request->query('vue', 'liste');
 
-        $query = Evenement::withCount('interets')
-            ->orderBy('date_debut', 'asc')
-            ->where('date_debut', '>=', now()->startOfDay());
+        $validThemes = ['sport', 'culture', 'citoyennete', 'environnement', 'autre'];
 
-        if ($theme && in_array($theme, ['sport', 'culture', 'citoyennete', 'environnement', 'autre'])) {
+        $query = Evenement::withCount('interets')->orderBy('date_debut', 'asc');
+
+        if ($theme && in_array($theme, $validThemes)) {
             $query->where('theme', $theme);
         }
 
-        $evenements = $query->get()->map(function ($evenement) {
-            $evenement->est_interesse = $evenement->interets()
-                ->where('user_id', auth()->id())
-                ->exists();
-            return $evenement;
+        if ($vue === 'calendrier') {
+            $query->whereYear('date_debut', $annee)
+                  ->whereMonth('date_debut', $mois);
+        } else {
+            $query->where('date_debut', '>=', now()->startOfDay());
+        }
+
+        $evenements = $query->get()->map(function ($e) {
+            $e->est_interesse = $e->interets()->where('user_id', auth()->id())->exists();
+            return $e;
         });
 
         return Inertia::render('agenda/index', [
             'evenements'   => $evenements,
             'currentTheme' => $theme,
+            'vue'          => $vue,
+            'mois'         => $mois,
+            'annee'        => $annee,
         ]);
     }
 
     public function show(Evenement $evenement): Response
     {
         $evenement->loadCount('interets');
-        $estInteresse = $evenement->interets()
-            ->where('user_id', auth()->id())
-            ->exists();
+        $estInteresse = $evenement->interets()->where('user_id', auth()->id())->exists();
 
         return Inertia::render('agenda/show', [
             'evenement'    => $evenement,
