@@ -1,4 +1,4 @@
-import { AlertCircle, Calendar, MessageSquare, Vote, MapPin, ChevronRight, Clock } from 'lucide-react';
+import { AlertCircle, Calendar, MessageSquare, Vote, MapPin, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
@@ -111,8 +111,8 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
                                 </div>
                             </Link>
 
-                            {/* Sondages — bientôt */}
-                            <div className="flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 relative overflow-hidden opacity-60">
+                            {/* Sondages */}
+                            <Link href={auth.user ? '/sondages' : login()} className="flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 hover:shadow-md hover:border-border transition-all">
                                 <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#1A5276' + '18' }}>
                                     <Vote className="w-5 h-5" style={{ color: '#1A5276' }} />
                                 </div>
@@ -120,13 +120,10 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
                                     <p className="font-semibold text-sm">Sondages</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">Participez aux consultations publiques</p>
                                 </div>
-                                <span className="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                                    <Clock className="w-3 h-3" /> Bientôt
-                                </span>
-                            </div>
+                            </Link>
 
-                            {/* Agenda — bientôt */}
-                            <div className="flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 relative overflow-hidden opacity-60">
+                            {/* Agenda */}
+                            <Link href={auth.user ? '/agenda' : login()} className="flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 hover:shadow-md hover:border-border transition-all">
                                 <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#27AE60' + '18' }}>
                                     <Calendar className="w-5 h-5" style={{ color: '#27AE60' }} />
                                 </div>
@@ -134,13 +131,10 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
                                     <p className="font-semibold text-sm">Agenda</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">Consultez les événements de la ville</p>
                                 </div>
-                                <span className="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                                    <Clock className="w-3 h-3" /> Bientôt
-                                </span>
-                            </div>
+                            </Link>
 
                             {/* Actualités */}
-                            <div className="flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 relative overflow-hidden opacity-60">
+                            <Link href={auth.user ? '/discussion' : login()} className="flex flex-col gap-3 p-5 rounded-2xl bg-card border border-border/50 hover:shadow-md hover:border-border transition-all">
                                 <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#9B59B6' + '18' }}>
                                     <MessageSquare className="w-5 h-5" style={{ color: '#9B59B6' }} />
                                 </div>
@@ -148,10 +142,7 @@ export default function Welcome({ canRegister = true }: { canRegister?: boolean 
                                     <p className="font-semibold text-sm">Actualités</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">Restez informé des actualités locales</p>
                                 </div>
-                                <span className="absolute top-2 right-2 flex items-center gap-1 text-[10px] font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                                    <Clock className="w-3 h-3" /> Bientôt
-                                </span>
-                            </div>
+                            </Link>
                         </div>
                     </div>
 
